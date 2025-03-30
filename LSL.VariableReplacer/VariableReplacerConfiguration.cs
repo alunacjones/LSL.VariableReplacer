@@ -8,16 +8,16 @@ namespace LSL.VariableReplacer;
 /// </summary>
 public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableReplacerConfiguration>
 {
-    internal readonly IDictionary<string, string> _variables = new Dictionary<string, string>();
-    internal ITransformer _transformer = new RegexTransformer();
-    internal Func<string, string> _whenVariableNotFound = variableName => $"NOTFOUND:{variableName}";
+    internal IDictionary<string, string> Variables { get; } = new Dictionary<string, string>();
+    internal ITransformer Transformer { get; private set; } = new RegexTransformer();
+    internal Func<string, string> VariableNotFound { get; private set; } = variableName => $"NOTFOUND:{variableName}";
 
     /// <inheritdoc/>
     public VariableReplacerConfiguration AddVariable(string name, string value)
     {
         Guard.IsNotNull(name, nameof(name));
 
-        _variables.Add(name, value);
+        Variables.Add(name, value);
         return this;
     }
 
@@ -32,7 +32,7 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     /// <returns></returns>
     public VariableReplacerConfiguration WithTransformer(ITransformer transformer)
     {
-         _transformer = transformer;
+         Transformer = transformer;
          return this;
     }
 
@@ -56,7 +56,7 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     /// <returns></returns>
     public VariableReplacerConfiguration WhenVariableNotFound(Func<string, string> whenVariableNotFound)
     {
-        _whenVariableNotFound = whenVariableNotFound;
+        VariableNotFound = whenVariableNotFound;
         return this;
     }
 
