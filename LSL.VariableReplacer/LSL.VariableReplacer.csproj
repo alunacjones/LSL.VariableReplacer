@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <SnkFile>LSL.snk</SnkFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="Exists('$(SnkFile)')">
+    <AssemblyOriginatorKeyFile>$(SnkFile)</AssemblyOriginatorKeyFile>
+    <SignAssembly>True</SignAssembly>      
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <Version>1.0.1</Version>
+    <PackageVersion>1.0.1</PackageVersion>
+    <PackageTags></PackageTags>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
+    <PackageDescription>Description here</PackageDescription>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/alunacjones/LSL.VariableReplacer</RepositoryUrl>
+    <Authors>alunacjones</Authors>
+    <LangVersion>12</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\readme.md" Pack="true" PackagePath=""/>
+  </ItemGroup>   
+</Project>
