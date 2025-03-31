@@ -107,22 +107,31 @@ public class VariableReplacerFactoryTests
             .Be("Hello Al Jones. Can I call you Al?");         
     }
 
-    [Test]
-    public void VariableReplacerFactory_GivenABuildWithVariablesAndCustomVariableDelimetersAndKeyPreProcessor_ItShouldReplaceAllVariables()
+    [TestCase("a/path")]
+    [TestCase("a/path/")]
+    public void VariableReplacerFactory_GivenABuildWithVariablesAndCustomVariableDelimetersAndKeyPreProcessor_ItShouldReplaceAllVariables(string path)
     {
         var sut = new VariableReplacerFactory()
             .Build(c => c
-                .WithDefaultTransformer(commandProcessor: (command, value) => command == "trim" ? value.Trim() : value)
+                .WithDefaultTransformer(commandProcessor: (command, value) => command switch
+                    {
+                        "trim" => value.Trim(),
+                        "ensureSlash" => value.EndsWith("/") ? value : $"{value}/",
+                        _ => value
+                    }
+                )
                 .AddVariables(new Dictionary<string, object>
                 {
                     ["FirstName"] = "   Al    ",
                     ["LastName"] = "   Jones   ",
+                    ["Path"] = path,
+                    ["Other"] = null,
                     ["FullName"] = "$(FirstName:trim) $(LastName:trim)"
                 }));
 
-        sut.ReplaceVariables("Hello $(FullName)")
+        sut.ReplaceVariables("Hello $(FullName). You normalised '$(Path)' to '$(Path:ensureSlash)'$(Other:trim)")
             .Should()
-            .Be("Hello Al Jones");
+            .Be($"Hello Al Jones. You normalised '{path}' to 'a/path/'");
     }    
 
     [Test]

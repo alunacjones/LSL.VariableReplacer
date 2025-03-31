@@ -11,7 +11,7 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     internal IDictionary<string, object> Variables { get; } = new Dictionary<string, object>();
     internal ITransformer Transformer { get; private set; } = new RegexTransformer();
     internal Func<string, string> VariableNotFound { get; private set; } = variableName => $"NOTFOUND:{variableName}";
-    internal Func<object, string> ValueFormatter { get; private set; } = value => value.ToString();
+    internal Func<object, string> ValueFormatter { get; private set; } = value => $"{value}";
 
     /// <inheritdoc/>
     public VariableReplacerConfiguration AddVariable(string name, object value)
