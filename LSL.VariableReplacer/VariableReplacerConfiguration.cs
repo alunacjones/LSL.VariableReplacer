@@ -12,13 +12,14 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     internal ITransformer Transformer { get; private set; } = new RegexTransformer();
     internal Func<string, string> VariableNotFound { get; private set; } = variableName => $"NOTFOUND:{variableName}";
     internal Func<object, string> ValueFormatter { get; private set; } = value => $"{value}";
+    internal Action<IDictionary<string, object>, string, object> AddToDictionaryDelelgate = (dictionary, name, value) => dictionary.Add(name, value);
 
     /// <inheritdoc/>
     public VariableReplacerConfiguration AddVariable(string name, object value)
     {
         Guard.IsNotNull(name, nameof(name));
 
-        Variables.Add(name, value);
+        AddToDictionaryDelelgate(Variables, name, value);
         return this;
     }
 
@@ -94,4 +95,21 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
         ValueFormatter = formatter;
         return this;
     }
+
+    /// <inheritdoc/>
+    public VariableReplacerConfiguration WithAddToDictionaryDelelgate(Action<IDictionary<string, object>, string, object> action)
+    {
+        Guard.IsNotNull(action, nameof(action));
+
+        AddToDictionaryDelelgate = action;
+        return this;
+    }
+
+    /// <summary>
+    /// Uses replace variable behaviour when
+    /// adding to the variables dictionary
+    /// </summary>
+    /// <returns></returns>
+    public VariableReplacerConfiguration WithReplaceVariableBehaviour() =>
+        WithAddToDictionaryDelelgate((dicionary, name, value) => dicionary[name] = value);
 }

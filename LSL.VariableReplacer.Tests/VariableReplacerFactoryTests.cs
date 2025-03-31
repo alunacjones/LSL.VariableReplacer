@@ -49,6 +49,28 @@ public class VariableReplacerFactoryTests
     }        
 
     [Test]
+    public void VariableReplacerFactory_GivenTheDefaultAddBehaviour_ItShouldThrowAnExceptionWhenAddingTheSameVariable()
+    {
+        new Action(() => new VariableReplacerFactory()
+            .Build(c => c.AddVariable("same", 1).AddVariable("same", 2)))
+            .Should()
+            .Throw<ArgumentException>()
+            .WithMessage("An item with the same key has already been added. Key: same");
+    }
+
+    [Test]
+    public void VariableReplacerFactory_GivenTheReplaceBehaviour_ItShouldHaveTheLastOneAdded()
+    {
+        var sut = new VariableReplacerFactory()
+            .Build(c => c.WithReplaceVariableBehaviour().AddVariable("same", 1).AddVariable("same", 2));
+
+        sut.Variables.Should().BeEquivalentTo(new Dictionary<string, object>
+        {
+            ["same"] = 2
+        });
+    }
+
+    [Test]
     public void VariableReplacerFactory_GivenABuildWithVariables_ItShouldReplaceAllVariables()
     {
         var sut = new VariableReplacerFactory()

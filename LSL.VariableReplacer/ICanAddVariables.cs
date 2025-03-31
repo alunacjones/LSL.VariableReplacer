@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace LSL.VariableReplacer;
 
 /// <summary>
@@ -12,4 +15,13 @@ public interface ICanAddVariables<TSelf>
     /// <param name="name">The name of the variable</param>
     /// <param name="value">The value of the variable</param>
     TSelf AddVariable(string name, object value);    
+
+    /// <summary>
+    /// Provide a method for adding to the variables dictionary.
+    /// </summary>
+    /// <remarks>
+    /// The default behaviour is to use <see cref="IDictionary{TKey, TValue}.Add"><c>Add</c></see>.
+    /// This default behaviour raises an exception if a duplicate is added
+    /// </remarks>    
+    TSelf WithAddToDictionaryDelelgate(Action<IDictionary<string, object>, string, object> action);
 }
