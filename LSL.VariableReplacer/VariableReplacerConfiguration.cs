@@ -44,13 +44,13 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     /// </summary>
     /// <param name="variablePlaceholderPrefix"></param>
     /// <param name="variablePlaceholderSuffix"></param>
-    /// <param name="keyPreprocessor"></param>
+    /// <param name="commandProcessor"></param>
     /// <returns></returns>
     public VariableReplacerConfiguration WithDefaultTransformer(
         string variablePlaceholderPrefix = "$(",
         string variablePlaceholderSuffix = ")",
-        Func<string, (string, Func<string, string>)> keyPreprocessor = null) =>
-        WithTransformer(new RegexTransformer(variablePlaceholderPrefix, variablePlaceholderSuffix, keyPreprocessor ?? (key => (key, v => v))));
+        Func<string, string, string> commandProcessor = null) =>
+        WithTransformer(new RegexTransformer(variablePlaceholderPrefix, variablePlaceholderSuffix, commandProcessor));
 
     /// <summary>
     /// Provide a custom replacement string

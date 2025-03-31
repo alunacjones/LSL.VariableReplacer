@@ -112,21 +112,7 @@ public class VariableReplacerFactoryTests
     {
         var sut = new VariableReplacerFactory()
             .Build(c => c
-                .WithDefaultTransformer(keyPreprocessor: key =>
-                {
-                    static string Identity(string key) => key;
-
-                    var split = key.Split(":");
-                    if (split.Length == 2)
-                    {
-                        if (split[1] == "trim")
-                        {
-                            return (split[0], v => v.Trim());
-                        }
-                    }
-
-                    return (split[0], Identity);
-                })
+                .WithDefaultTransformer(commandProcessor: (command, value) => command == "trim" ? value.Trim() : value)
                 .AddVariables(new Dictionary<string, object>
                 {
                     ["FirstName"] = "   Al    ",
