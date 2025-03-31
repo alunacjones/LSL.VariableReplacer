@@ -6,14 +6,15 @@ namespace LSL.VariableReplacer;
 internal class RegexTransformer(
     string variablePlaceholderPrefix,
     string variablePlaceholderSuffix,
-    Func<string, string, string> commandProcessor = null) : ITransformer
+    CommandProcessingDelegate commandProcessor = null) : ITransformer
 {
     public RegexTransformer() : this("$(", ")", null) {}
 
-    internal Regex VariableMatcher => new($@"{Regex.Escape(variablePlaceholderPrefix)}([\w\.]+)(:(\w+))?{Regex.Escape(variablePlaceholderSuffix)}");
+    private readonly Lazy<Regex> _variableMatcher = new(() => new($@"{Regex.Escape(variablePlaceholderPrefix)}([\w\.]+)(:(\w+))?{Regex.Escape(variablePlaceholderSuffix)}"));
 
     public string Transform(IVariableResolutionContext variableResolutionContext) => 
-        VariableMatcher
+        _variableMatcher
+            .Value
             .Replace(
                 variableResolutionContext.Source, 
                 m => 
@@ -26,3 +27,11 @@ internal class RegexTransformer(
                         variableResolutionContext.VariableResolver.Resolve(m.Groups[1].Value));
                 });
 }
+
+/// <summary>
+/// The type of a command processor delegate
+/// </summary>
+/// <param name="command">The command for the processor to use</param>
+/// <param name="value">The value to be processed</param>
+/// <returns></returns>
+public delegate string CommandProcessingDelegate(string command, string value);

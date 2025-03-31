@@ -45,12 +45,16 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     /// </summary>
     /// <param name="variablePlaceholderPrefix"></param>
     /// <param name="variablePlaceholderSuffix"></param>
-    /// <param name="commandProcessor"></param>
+    /// <param name="commandProcessor">
+    /// A delegate that accepts a <c>command</c> and a <c>value</c> paramter.
+    /// Based on what the provided command is it can then return a modified version
+    /// of the value if required.
+    /// </param>
     /// <returns></returns>
     public VariableReplacerConfiguration WithDefaultTransformer(
         string variablePlaceholderPrefix = "$(",
         string variablePlaceholderSuffix = ")",
-        Func<string, string, string> commandProcessor = null) =>
+        CommandProcessingDelegate commandProcessor = null) =>
         WithTransformer(new RegexTransformer(variablePlaceholderPrefix, variablePlaceholderSuffix, commandProcessor));
 
     /// <summary>
