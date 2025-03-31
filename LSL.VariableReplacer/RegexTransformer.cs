@@ -1,16 +1,23 @@
+using System;
 using System.Text.RegularExpressions;
 
 namespace LSL.VariableReplacer;
 
-internal class RegexTransformer(string variablePlaceholderPrefix, string variablePlaceholderSuffix) : ITransformer
+internal class RegexTransformer(
+    string variablePlaceholderPrefix,
+    string variablePlaceholderSuffix,
+    Func<string, (string, Func<string, string>)> keyPreprocessor) : ITransformer
 {
-    public RegexTransformer() : this("$(", ")") {}
+    public RegexTransformer() : this("$(", ")", key => (key, v => v)) {}
 
-    internal Regex VariableMatcher { get; set; } = new Regex($@"{Regex.Escape(variablePlaceholderPrefix)}(\w+){Regex.Escape(variablePlaceholderSuffix)}");
+    internal Regex VariableMatcher => new($@"{Regex.Escape(variablePlaceholderPrefix)}([\w:]+){Regex.Escape(variablePlaceholderSuffix)}");
 
     public string Transform(IVariableResolutionContext variableResolutionContext) => 
         VariableMatcher
             .Replace(
                 variableResolutionContext.Source, 
-                m => variableResolutionContext.VariableResolver.Resolve(m.Groups[1].Value));
+                m => { 
+                    var (key, transform) = keyPreprocessor(m.Groups[1].Value);
+                    return transform(variableResolutionContext.VariableResolver.Resolve(key));
+                });
 }

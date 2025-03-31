@@ -8,12 +8,13 @@ namespace LSL.VariableReplacer;
 /// </summary>
 public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableReplacerConfiguration>
 {
-    internal IDictionary<string, string> Variables { get; } = new Dictionary<string, string>();
+    internal IDictionary<string, object> Variables { get; } = new Dictionary<string, object>();
     internal ITransformer Transformer { get; private set; } = new RegexTransformer();
     internal Func<string, string> VariableNotFound { get; private set; } = variableName => $"NOTFOUND:{variableName}";
+    internal Func<object, string> ValueFormatter { get; private set; } = value => value.ToString();
 
     /// <inheritdoc/>
-    public VariableReplacerConfiguration AddVariable(string name, string value)
+    public VariableReplacerConfiguration AddVariable(string name, object value)
     {
         Guard.IsNotNull(name, nameof(name));
 
@@ -32,8 +33,10 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     /// <returns></returns>
     public VariableReplacerConfiguration WithTransformer(ITransformer transformer)
     {
-         Transformer = transformer;
-         return this;
+        Guard.IsNotNull(transformer, nameof(transformer));
+
+        Transformer = transformer;
+        return this;
     }
 
     /// <summary>
@@ -41,9 +44,13 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     /// </summary>
     /// <param name="variablePlaceholderPrefix"></param>
     /// <param name="variablePlaceholderSuffix"></param>
+    /// <param name="keyPreprocessor"></param>
     /// <returns></returns>
-    public VariableReplacerConfiguration WithDefaultTransformer(string variablePlaceholderPrefix, string variablePlaceholderSuffix) =>
-        WithTransformer(new RegexTransformer(variablePlaceholderPrefix, variablePlaceholderSuffix));
+    public VariableReplacerConfiguration WithDefaultTransformer(
+        string variablePlaceholderPrefix = "$(",
+        string variablePlaceholderSuffix = ")",
+        Func<string, (string, Func<string, string>)> keyPreprocessor = null) =>
+        WithTransformer(new RegexTransformer(variablePlaceholderPrefix, variablePlaceholderSuffix, keyPreprocessor ?? (key => (key, v => v))));
 
     /// <summary>
     /// Provide a custom replacement string
@@ -56,6 +63,8 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     /// <returns></returns>
     public VariableReplacerConfiguration WhenVariableNotFound(Func<string, string> whenVariableNotFound)
     {
+        Guard.IsNotNull(whenVariableNotFound, nameof(whenVariableNotFound));
+
         VariableNotFound = whenVariableNotFound;
         return this;
     }
@@ -65,6 +74,14 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     /// </summary>
     /// <returns></returns>
     /// <exception cref="ArgumentException"></exception>
-    public VariableReplacerConfiguration ThrowIfVariableNotFound() => 
+    public VariableReplacerConfiguration ThrowIfVariableNotFound() =>
         WhenVariableNotFound(variableName => throw new ArgumentException($"Variable '{variableName}' not found"));
+
+    public VariableReplacerConfiguration WithValueFormatter(Func<object, string> formatter)
+    {
+        Guard.IsNotNull(formatter, nameof(formatter));
+
+        ValueFormatter = formatter;
+        return this;
+    }
 }

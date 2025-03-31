@@ -18,7 +18,7 @@ public static class CanAddVariablesExtensions
     /// <param name="variableDictionary"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentException"></exception>
-    public static TSelf AddVariables<TSelf>(this TSelf source, IDictionary<string, string> variableDictionary)
+    public static TSelf AddVariables<TSelf>(this TSelf source, IDictionary<string, object> variableDictionary)
         where TSelf : ICanAddVariables<TSelf>
     {
         Guard.IsNotNull(variableDictionary, nameof(variableDictionary));

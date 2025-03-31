@@ -11,5 +11,5 @@ public interface ICanAddVariables<TSelf>
     /// </summary>
     /// <param name="name">The name of the variable</param>
     /// <param name="value">The value of the variable</param>
-    TSelf AddVariable(string name, string value);    
+    TSelf AddVariable(string name, object value);    
 }

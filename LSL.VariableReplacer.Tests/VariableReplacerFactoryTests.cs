@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using DotNetEnv;
 using FluentAssertions;
 
@@ -19,10 +20,21 @@ public class VariableReplacerFactoryTests
     }
 
     [Test]
+    public void VariableReplacerFactory_GivenABuildWithVariablesAndACustomerFormatter_ItShouldReplaceAnyVariables()
+    {
+        var sut = new VariableReplacerFactory()
+            .Build(c => c.AddVariable("name", "Als").WithValueFormatter(o => $"!{o}!"));
+
+        sut.ReplaceVariables("Hello $(name)")
+            .Should()
+            .Be("Hello !Als!");         
+    }    
+
+    [Test]
     public void VariableReplacerFactory_GivenABuildWithVariables_ItShouldReplaceAllVariables()
     {
         var sut = new VariableReplacerFactory()
-            .Build(c => c.AddVariables(new Dictionary<string, string>
+            .Build(c => c.AddVariables(new Dictionary<string, object>
             {
                 ["FirstName"] = "Al",
                 ["LastName"] = "Jones"
@@ -37,7 +49,7 @@ public class VariableReplacerFactoryTests
     public void VariableReplacerFactory_GivenABuildWithRecursiveVariables_ItShouldReplaceAllVariables()
     {
         var sut = new VariableReplacerFactory()
-            .Build(c => c.AddVariables(new Dictionary<string, string>
+            .Build(c => c.AddVariables(new Dictionary<string, object>
             {
                 ["FirstName"] = "Al",
                 ["LastName"] = "Jones",
@@ -64,7 +76,7 @@ public class VariableReplacerFactoryTests
     public void VariableReplacerFactory_GivenABuildWithCyclicRecursiveVariables_ItShouldTherowTheExpectedException()
     {
         var sut = new VariableReplacerFactory()
-            .Build(c => c.AddVariables(new Dictionary<string, string>
+            .Build(c => c.AddVariables(new Dictionary<string, object>
             {
                 ["FirstName"] = "Al",
                 ["LastName"] = "Jones",
@@ -84,7 +96,7 @@ public class VariableReplacerFactoryTests
         var sut = new VariableReplacerFactory()
             .Build(c => c
                 .WithDefaultTransformer("$${", "}")
-                .AddVariables(new Dictionary<string, string>
+                .AddVariables(new Dictionary<string, object>
                 {
                     ["FirstName"] = "Al",
                     ["LastName"] = "Jones"
@@ -94,6 +106,38 @@ public class VariableReplacerFactoryTests
             .Should()
             .Be("Hello Al Jones. Can I call you Al?");         
     }
+
+    [Test]
+    public void VariableReplacerFactory_GivenABuildWithVariablesAndCustomVariableDelimetersAndKeyPreProcessor_ItShouldReplaceAllVariables()
+    {
+        var sut = new VariableReplacerFactory()
+            .Build(c => c
+                .WithDefaultTransformer(keyPreprocessor: key =>
+                {
+                    static string Identity(string key) => key;
+
+                    var split = key.Split(":");
+                    if (split.Length == 2)
+                    {
+                        if (split[1] == "trim")
+                        {
+                            return (split[0], v => v.Trim());
+                        }
+                    }
+
+                    return (split[0], Identity);
+                })
+                .AddVariables(new Dictionary<string, object>
+                {
+                    ["FirstName"] = "   Al    ",
+                    ["LastName"] = "   Jones   ",
+                    ["FullName"] = "$(FirstName:trim) $(LastName:trim)"
+                }));
+
+        sut.ReplaceVariables("Hello $(FullName)")
+            .Should()
+            .Be("Hello Al Jones");
+    }    
 
     [Test]
     public void VariableReplacerFactory_GivenABuildWithEnvironmentVariables_ItShouldReplaceAllVariables()
@@ -110,7 +154,7 @@ public class VariableReplacerFactoryTests
             .Build(c => c
                 .AddEnvironmentVariables(key => key.StartsWith(prefix), prefix: null));
 
-        sut.Variables.Should().BeEquivalentTo(new Dictionary<string, string>
+        sut.Variables.Should().BeEquivalentTo(new Dictionary<string, object>
         {
             ["ALS_NAME"] = "Als"
         });
@@ -146,7 +190,7 @@ public class VariableReplacerFactoryTests
     public void VariableReplacerFactory_GivenABuildWithVariablesButWeAddAVariableWithANullKey_ItShouldThrowTheExpectedException()
     {
         new Action(() =>  new VariableReplacerFactory()
-            .Build(c => c.AddVariables(new Dictionary<string, string>
+            .Build(c => c.AddVariables(new Dictionary<string, object>
             {
                 ["Name"] = "Als",
             }).AddVariable(null, null))

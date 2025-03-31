@@ -1,15 +1,14 @@
-using System;
-using System.Collections.Generic;
-
 namespace LSL.VariableReplacer;
 
-internal class VariableResolver(
-    IDictionary<string, string> variables,
-    Func<string, string> notFoundMessageFactory,
-    VariablePathWrapperTransformer transformer) : IVariableResolver
+internal class VariableResolver(VariableReplacerConfiguration config, VariablePathWrapperTransformer transformer) : IVariableResolver
 {
-    public string Resolve(string variableName) => 
-        variables.TryGetValue(variableName, out var value)
-            ? transformer.Transform(new TrackingVariableResolutionContext(variableName, value, this))
-            : notFoundMessageFactory(variableName);
+    public string Resolve(string variableName)
+    {
+        return config.Variables.TryGetValue(variableName, out var value) 
+            ? Transform(value) 
+            : config.VariableNotFound(variableName);
+
+        string Transform(object value) => 
+            transformer.Transform(new TrackingVariableResolutionContext(variableName, config.ValueFormatter(value), this));
+    }
 }

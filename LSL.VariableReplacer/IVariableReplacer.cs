@@ -17,5 +17,5 @@ public interface IVariableReplacer
     /// <summary>
     /// The variables available to replace with
     /// </summary>
-    IReadOnlyDictionary<string, string> Variables { get;}
+    IReadOnlyDictionary<string, object> Variables { get;}
 }
