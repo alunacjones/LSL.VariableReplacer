@@ -54,4 +54,32 @@ public static class CanAddVariablesExtensions
             .Select(key => new { key, value = environmentVariables[key].ToString() })
             .Aggregate(source, (agg, i) => agg.AddVariable($"{prefix}{i.key}", i.value));
     }
+
+    public static TSelf AddVariablesFromObject<TSelf>(this TSelf source, object value)
+        where TSelf : ICanAddVariables<TSelf>
+    {
+        Guard.IsNotNull(value, nameof(value));
+
+        AddProperties(value, string.Empty);
+
+        return source;
+
+        void AddProperties(object value, string path)
+        {
+            _ =value.GetType().GetProperties()
+                .Aggregate(true, (agg, property) =>
+                {
+                    if (property.PropertyType.IsPrimitive || property.PropertyType == typeof(string))
+                    {
+                        source.AddVariable(MakePath(), property.GetValue(value));
+                        return agg;
+                    }
+
+                    AddProperties(property.GetValue(value), MakePath());
+                    return agg;
+
+                    string MakePath() => path.Length == 0 ? $"{property.Name}" : $"{path}.{property.Name}";
+                });            
+        }
+    }
 }

@@ -10,7 +10,7 @@ internal class RegexTransformer(
 {
     public RegexTransformer() : this("$(", ")", null) {}
 
-    internal Regex VariableMatcher => new($@"{Regex.Escape(variablePlaceholderPrefix)}([\w]+)(:(\w+))?{Regex.Escape(variablePlaceholderSuffix)}");
+    internal Regex VariableMatcher => new($@"{Regex.Escape(variablePlaceholderPrefix)}([\w\.]+)(:(\w+))?{Regex.Escape(variablePlaceholderSuffix)}");
 
     public string Transform(IVariableResolutionContext variableResolutionContext) => 
         VariableMatcher
