@@ -14,9 +14,12 @@
     <TargetFrameworks>net451;netstandard2.0</TargetFrameworks>
     <Version>1.0.1</Version>
     <PackageVersion>1.0.1</PackageVersion>
-    <PackageTags></PackageTags>
+    <PackageTags>variable;replacer;replacement;variables;variable-replacer;variable-replacement;replace;template</PackageTags>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
-    <PackageDescription>Description here</PackageDescription>
+    <PackageDescription>
+      A variable replacement library that will create a variable replacer instance via the factory 
+      to replace variables from a given source strings
+    </PackageDescription>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/alunacjones/LSL.VariableReplacer</RepositoryUrl>
     <Authors>alunacjones</Authors>
