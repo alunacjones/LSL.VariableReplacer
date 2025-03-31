@@ -77,6 +77,16 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     public VariableReplacerConfiguration ThrowIfVariableNotFound() =>
         WhenVariableNotFound(variableName => throw new ArgumentException($"Variable '{variableName}' not found"));
 
+    /// <summary>
+    /// Optional formatter of a variable value
+    /// </summary>
+    /// <remarks>
+    /// The default formatter will use <see cref="object.ToString"><c>ToString</c></see>
+    /// to format all objects. <see langword="null"><c>null</c></see>
+    /// will result in an empty string
+    /// </remarks>
+    /// <param name="formatter"></param>
+    /// <returns></returns>
     public VariableReplacerConfiguration WithValueFormatter(Func<object, string> formatter)
     {
         Guard.IsNotNull(formatter, nameof(formatter));

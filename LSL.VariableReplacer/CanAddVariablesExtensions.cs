@@ -55,6 +55,16 @@ public static class CanAddVariablesExtensions
             .Aggregate(source, (agg, i) => agg.AddVariable($"{prefix}{i.key}", i.value));
     }
 
+    /// <summary>
+    /// Adds all properties from an object
+    /// </summary>
+    /// <remarks>
+    /// Any object properties will be recursively traversed
+    /// </remarks>
+    /// <typeparam name="TSelf"></typeparam>
+    /// <param name="source"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
     public static TSelf AddVariablesFromObject<TSelf>(this TSelf source, object value)
         where TSelf : ICanAddVariables<TSelf>
     {
