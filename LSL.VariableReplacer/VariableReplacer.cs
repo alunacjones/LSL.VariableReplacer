@@ -7,6 +7,8 @@ internal class VariableReplacer(VariableReplacerConfiguration configuration) : I
 {
     public IReadOnlyDictionary<string, object> Variables => new ReadOnlyDictionary<string, object>(configuration.Variables);
 
+    internal VariableReplacerConfiguration Configuration => configuration;
+
     public string ReplaceVariables(string sourceToReplaceVariablesIn) =>
         configuration.Transformer.Transform(new VariableResolutionContext(
             sourceToReplaceVariablesIn,
