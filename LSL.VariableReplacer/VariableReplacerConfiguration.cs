@@ -9,8 +9,14 @@ namespace LSL.VariableReplacer;
 /// </summary>
 public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableReplacerConfiguration>
 {
-    internal VariableReplacerConfiguration() {}
-    
+    internal VariableReplacerConfiguration(): this(
+        new Dictionary<string, object>(),
+        new RegexTransformer(),
+        variableName => $"NOTFOUND:{variableName}",
+        value => $"{value}",
+        (dictionary, name, value) => dictionary.Add(name, value)
+    ) {}
+
     internal VariableReplacerConfiguration(
         IDictionary<string, object> variables,
         ITransformer transformer,
@@ -25,11 +31,11 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
         AddToDictionaryDelelgate = addToDictionaryDelelgate;
     }
 
-    internal IDictionary<string, object> Variables { get; } = new Dictionary<string, object>();
-    internal ITransformer Transformer { get; private set; } = new RegexTransformer();
-    internal Func<string, string> VariableNotFound { get; private set; } = variableName => $"NOTFOUND:{variableName}";
-    internal Func<object, string> ValueFormatter { get; private set; } = value => $"{value}";
-    internal Action<IDictionary<string, object>, string, object> AddToDictionaryDelelgate = (dictionary, name, value) => dictionary.Add(name, value);
+    internal IDictionary<string, object> Variables { get; } 
+    internal ITransformer Transformer { get; private set; }
+    internal Func<string, string> VariableNotFound { get; private set; }
+    internal Func<object, string> ValueFormatter { get; private set; }
+    internal Action<IDictionary<string, object>, string, object> AddToDictionaryDelelgate { get; private set; }
 
     /// <inheritdoc/>
     public VariableReplacerConfiguration AddVariable(string name, object value)
