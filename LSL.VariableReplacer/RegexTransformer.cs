@@ -6,11 +6,16 @@ namespace LSL.VariableReplacer;
 internal class RegexTransformer(
     string variablePlaceholderPrefix,
     string variablePlaceholderSuffix,
-    CommandProcessingDelegate commandProcessor = null) : ITransformer
+    CommandProcessingDelegate commandProcessor = null,
+    RegexOptions? regexOptions = null,
+    TimeSpan? regexTimeout = null) : ITransformer
 {
-    public RegexTransformer() : this("$(", ")", null) {}
+    public RegexTransformer() : this("$(", ")") {}
 
-    private readonly Lazy<Regex> _variableMatcher = new(() => new($@"{Regex.Escape(variablePlaceholderPrefix)}([\w\.]+)(:(\w+))?{Regex.Escape(variablePlaceholderSuffix)}"));
+    private readonly Lazy<Regex> _variableMatcher = new(() => new(
+        $@"{Regex.Escape(variablePlaceholderPrefix)}([\w\.]+)(:(\w+))?{Regex.Escape(variablePlaceholderSuffix)}", 
+        regexOptions ?? (RegexOptions.Multiline | RegexOptions.Compiled), 
+        regexTimeout ?? TimeSpan.FromSeconds(10)));
 
     public string Transform(IVariableResolutionContext variableResolutionContext) => 
         _variableMatcher

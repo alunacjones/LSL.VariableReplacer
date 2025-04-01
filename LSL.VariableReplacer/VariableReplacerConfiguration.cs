@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace LSL.VariableReplacer;
 
@@ -60,7 +61,7 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     }
 
     /// <summary>
-    /// Customise the pattern used for the default Regex-based transformer
+    /// Customise the Regex-based transformer
     /// </summary>
     /// <param name="variablePlaceholderPrefix"></param>
     /// <param name="variablePlaceholderSuffix"></param>
@@ -69,19 +70,35 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     /// Based on what the provided command is it can then return a modified version
     /// of the value if required.
     /// </param>
+    /// <param name="regexOptions">
+    /// The <see cref="RegexOptions"/> to configure the transformer with.
+    /// If not set then <c>RegexOptions.Multiline | RegexOptions.Compiled</c> will be used
+    /// </param>
+    /// <param name="regexTimeOut">
+    /// The timeout for the regular expression.
+    /// If not set then it defaults to 10 seconds
+    /// </param>
     /// <returns></returns>
     public VariableReplacerConfiguration WithDefaultTransformer(
         string variablePlaceholderPrefix = "$(",
         string variablePlaceholderSuffix = ")",
-        CommandProcessingDelegate commandProcessor = null) =>
-        WithTransformer(new RegexTransformer(variablePlaceholderPrefix, variablePlaceholderSuffix, commandProcessor));
+        CommandProcessingDelegate commandProcessor = null,
+        RegexOptions? regexOptions = null,
+        TimeSpan? regexTimeOut = null) =>        
+        WithTransformer(new RegexTransformer(
+            variablePlaceholderPrefix,
+            variablePlaceholderSuffix,
+            commandProcessor,
+            regexOptions,
+            regexTimeOut));
 
     /// <summary>
     /// Provide a custom replacement string
     /// for a variable placeholder if it is not found
     /// </summary>
     /// <remarks>
-    /// An exception can be thrown instead of returning a string
+    /// An exception can be thrown instead of returning a string.
+    /// The string passed into the function is the name of the variable.
     /// </remarks>
     /// <param name="whenVariableNotFound"></param>
     /// <returns></returns>
@@ -131,7 +148,11 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
         WithAddToDictionaryDelelgate((dicionary, name, value) => dicionary[name] = value);
 
     internal VariableReplacerConfiguration Clone() =>
-        new(CopyDictionary(Variables), Transformer, VariableNotFound, ValueFormatter, AddToDictionaryDelelgate);
+        new(CopyDictionary(Variables),
+            Transformer,
+            VariableNotFound,
+            ValueFormatter,
+            AddToDictionaryDelelgate);
 
     private static IDictionary<string, object> CopyDictionary(IDictionary<string, object> source) =>
         source.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
