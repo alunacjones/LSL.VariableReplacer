@@ -9,6 +9,8 @@ namespace LSL.VariableReplacer;
 /// </summary>
 public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableReplacerConfiguration>
 {
+    internal VariableReplacerConfiguration() {}
+    
     internal VariableReplacerConfiguration(
         IDictionary<string, object> variables,
         ITransformer transformer,
