@@ -27,4 +27,4 @@ This default settings expect a variable placeholder should be of the format `$(V
 
 ## Futher Documentation
 
-More in-depth documentation can be found [here]()
+More in-depth documentation can be found [here](https://github.com/alunacjones/LSL.VariableReplacer/blob/master/docs/index.md)
