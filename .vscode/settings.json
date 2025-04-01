@@ -1,0 +1,19 @@
+{
+  "run-command.commands": [
+    {
+      "command": "get-childitem -Recurse -Force -Filter 'TestResults' | Remove-Item -Recurse -Force;$out = (join-path $env:Temp 'Coverage'); dotnet test --collect:\"XPlat Code Coverage\" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura;reportgenerator -filefilters:-*.g.cs -reports:**/TestResults/**/*.xml -targetdir:$out; if ($LASTEXITCODE -eq 0) { invoke-item \"$out\\index.html\" }",
+      "name": "Cover Tests",
+      "path": "${workspaceFolder}"
+    },
+    {
+      "command": "dotnet docfx",
+      "name": "Generate docs site",
+      "path": "${workspaceFolder}/docs"
+    },
+    {
+        "command": "dotnet serve -d _site",
+        "name": "Serve docs site",
+        "path": "${workspaceFolder}/docs"
+      }    
+  ]
+}

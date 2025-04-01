@@ -39,11 +39,8 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     internal Action<IDictionary<string, object>, string, object> AddToDictionaryDelelgate { get; private set; }
 
     /// <inheritdoc/>
-    public VariableReplacerConfiguration AddVariable(string name, object value)
-    {
-        AddToDictionaryDelelgate(Variables, Guard.IsNotNull(name, nameof(name)), value);
-        return this;
-    }
+    public VariableReplacerConfiguration AddVariable(string name, object value) => 
+        ReturnThis(() => AddToDictionaryDelelgate(Variables, Guard.IsNotNull(name, nameof(name)), value));
 
     /// <summary>
     /// Use a custom transformer
@@ -54,11 +51,8 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     /// </remarks>
     /// <param name="transformer">A custom transformer</param>
     /// <returns></returns>
-    public VariableReplacerConfiguration WithTransformer(ITransformer transformer)
-    {
-        Transformer = Guard.IsNotNull(transformer, nameof(transformer));
-        return this;
-    }
+    public VariableReplacerConfiguration WithTransformer(ITransformer transformer) => 
+        ReturnThis(() => Transformer = Guard.IsNotNull(transformer, nameof(transformer)));
 
     /// <summary>
     /// Customise the Regex-based transformer
@@ -102,11 +96,8 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     /// </remarks>
     /// <param name="whenVariableNotFound"></param>
     /// <returns></returns>
-    public VariableReplacerConfiguration WhenVariableNotFound(Func<string, string> whenVariableNotFound)
-    {
-        VariableNotFound = Guard.IsNotNull(whenVariableNotFound, nameof(whenVariableNotFound));
-        return this;
-    }
+    public VariableReplacerConfiguration WhenVariableNotFound(Func<string, string> whenVariableNotFound) => 
+        ReturnThis(() => VariableNotFound = Guard.IsNotNull(whenVariableNotFound, nameof(whenVariableNotFound)));
 
     /// <summary>
     /// Throw an exception if a variable is not found
@@ -126,18 +117,12 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     /// </remarks>
     /// <param name="formatter"></param>
     /// <returns></returns>
-    public VariableReplacerConfiguration WithValueFormatter(Func<object, string> formatter)
-    {        
-        ValueFormatter = Guard.IsNotNull(formatter, nameof(formatter));
-        return this;
-    }
+    public VariableReplacerConfiguration WithValueFormatter(Func<object, string> formatter) => 
+        ReturnThis(() => ValueFormatter = Guard.IsNotNull(formatter, nameof(formatter)));
 
     /// <inheritdoc/>
-    public VariableReplacerConfiguration WithAddToDictionaryDelelgate(Action<IDictionary<string, object>, string, object> action)
-    {        
-        AddToDictionaryDelelgate = Guard.IsNotNull(action, nameof(action));
-        return this;
-    }
+    public VariableReplacerConfiguration WithAddToDictionaryDelelgate(Action<IDictionary<string, object>, string, object> action) => 
+        ReturnThis(() => AddToDictionaryDelelgate = Guard.IsNotNull(action, nameof(action)));
 
     /// <summary>
     /// Uses replace variable behaviour when
@@ -156,4 +141,10 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
 
     private static IDictionary<string, object> CopyDictionary(IDictionary<string, object> source) =>
         source.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+    private VariableReplacerConfiguration ReturnThis(Action toRun)
+    {
+        toRun();
+        return this;
+    }
 }

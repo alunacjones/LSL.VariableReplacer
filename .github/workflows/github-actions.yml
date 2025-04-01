@@ -1,0 +1,51 @@
+name: LSL.VariableReplacer
+on:
+  push:
+    branches:
+      - master
+      #- feature/*
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+env:
+  version: 1.2.${{ github.run_number }}
+jobs:
+  build:
+    runs-on: ubuntu-latest      
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+      - name: Version
+        run: echo ${{ env.version }}
+      - name: Install tools
+        run: dotnet tool restore
+      # - name: Restore dependencies
+      #   run: dotnet restore
+      # - name: Build the solution
+      #   run: dotnet build --configuration Release --no-restore
+      # - name: Pack the NuGet package
+      #   run: dotnet pack --configuration Release --no-build --output ./nupkg --version-suffix ${{ env.version }}
+      # - name: Publish NuGet package
+      #   run: dotnet nuget push ./nupkg/*.nupkg --source https://api.nuget.org/v3/index.json --api-key $NUGET_API_KEY
+      #   env:
+      #     NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+      - name: Generate Site
+        run: dotnet docfx docs/docfx.json
+      - name: Upload static files as artifact
+        id: deployment
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/_site/
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}    
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

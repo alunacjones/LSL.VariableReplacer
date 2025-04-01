@@ -363,3 +363,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# docs
+docs/**
+!docs/docfx.json
+!docs/**/*.md
+!docs/toc.yml
