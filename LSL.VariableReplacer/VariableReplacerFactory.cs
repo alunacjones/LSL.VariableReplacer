@@ -13,12 +13,8 @@ public class VariableReplacerFactory
     /// </summary>
     /// <param name="configurator"></param>
     /// <returns></returns>
-    public IVariableReplacer Build(Action<VariableReplacerConfiguration> configurator)
-    {
-        Guard.IsNotNull(configurator, nameof(configurator));
-
-        return InnerBuild(new VariableReplacerConfiguration(), configurator);
-    }
+    public IVariableReplacer Build(Action<VariableReplacerConfiguration> configurator) => 
+        InnerBuild(new VariableReplacerConfiguration(), Guard.IsNotNull(configurator, nameof(configurator)));
 
     internal static IVariableReplacer InnerBuild(VariableReplacerConfiguration configuration, Action<VariableReplacerConfiguration> configurator)
     {

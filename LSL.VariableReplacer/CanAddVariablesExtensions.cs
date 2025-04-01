@@ -19,12 +19,9 @@ public static class CanAddVariablesExtensions
     /// <returns></returns>
     /// <exception cref="ArgumentException"></exception>
     public static TSelf AddVariables<TSelf>(this TSelf source, IDictionary<string, object> variableDictionary)
-        where TSelf : ICanAddVariables<TSelf>
-    {
-        Guard.IsNotNull(variableDictionary, nameof(variableDictionary));
-        
-        return variableDictionary.Aggregate(source, (agg, i) => agg.AddVariable(i.Key, i.Value));
-    }
+        where TSelf : ICanAddVariables<TSelf> => 
+            Guard.IsNotNull(variableDictionary, nameof(variableDictionary))
+                .Aggregate(source, (agg, i) => agg.AddVariable(i.Key, i.Value));
 
     /// <summary>
     /// Adds environment variables to the variables
@@ -67,17 +64,12 @@ public static class CanAddVariablesExtensions
     /// <returns></returns>
     public static TSelf AddVariablesFromObject<TSelf>(this TSelf source, object value)
         where TSelf : ICanAddVariables<TSelf>
-    {
-        Guard.IsNotNull(value, nameof(value));
+    {        
+        return AddProperties(Guard.IsNotNull(value, nameof(value)), string.Empty);
 
-        AddProperties(value, string.Empty);
-
-        return source;
-
-        void AddProperties(object value, string path)
-        {
-            _ =value.GetType().GetProperties()
-                .Aggregate(true, (agg, property) =>
+        TSelf AddProperties(object value, string path) => 
+            value.GetType().GetProperties()
+                .Aggregate(source, (agg, property) =>
                 {
                     if (property.PropertyType.IsPrimitive || property.PropertyType == typeof(string))
                     {
@@ -89,7 +81,6 @@ public static class CanAddVariablesExtensions
                     return agg;
 
                     string MakePath() => path.Length == 0 ? $"{property.Name}" : $"{path}.{property.Name}";
-                });            
-        }
+                });
     }
 }

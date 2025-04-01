@@ -40,9 +40,7 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     /// <inheritdoc/>
     public VariableReplacerConfiguration AddVariable(string name, object value)
     {
-        Guard.IsNotNull(name, nameof(name));
-
-        AddToDictionaryDelelgate(Variables, name, value);
+        AddToDictionaryDelelgate(Variables, Guard.IsNotNull(name, nameof(name)), value);
         return this;
     }
 
@@ -57,9 +55,7 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     /// <returns></returns>
     public VariableReplacerConfiguration WithTransformer(ITransformer transformer)
     {
-        Guard.IsNotNull(transformer, nameof(transformer));
-
-        Transformer = transformer;
+        Transformer = Guard.IsNotNull(transformer, nameof(transformer));
         return this;
     }
 
@@ -91,9 +87,7 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     /// <returns></returns>
     public VariableReplacerConfiguration WhenVariableNotFound(Func<string, string> whenVariableNotFound)
     {
-        Guard.IsNotNull(whenVariableNotFound, nameof(whenVariableNotFound));
-
-        VariableNotFound = whenVariableNotFound;
+        VariableNotFound = Guard.IsNotNull(whenVariableNotFound, nameof(whenVariableNotFound));
         return this;
     }
 
@@ -116,19 +110,15 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     /// <param name="formatter"></param>
     /// <returns></returns>
     public VariableReplacerConfiguration WithValueFormatter(Func<object, string> formatter)
-    {
-        Guard.IsNotNull(formatter, nameof(formatter));
-
-        ValueFormatter = formatter;
+    {        
+        ValueFormatter = Guard.IsNotNull(formatter, nameof(formatter));
         return this;
     }
 
     /// <inheritdoc/>
     public VariableReplacerConfiguration WithAddToDictionaryDelelgate(Action<IDictionary<string, object>, string, object> action)
-    {
-        Guard.IsNotNull(action, nameof(action));
-
-        AddToDictionaryDelelgate = action;
+    {        
+        AddToDictionaryDelelgate = Guard.IsNotNull(action, nameof(action));
         return this;
     }
 
