@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace LSL.VariableReplacer;
 
@@ -8,6 +9,20 @@ namespace LSL.VariableReplacer;
 /// </summary>
 public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableReplacerConfiguration>
 {
+    internal VariableReplacerConfiguration(
+        IDictionary<string, object> variables,
+        ITransformer transformer,
+        Func<string, string> variableNotFound,
+        Func<object, string> valueFormatter,
+        Action<IDictionary<string, object>, string, object> addToDictionaryDelelgate)
+    {
+        Variables = variables;
+        Transformer = transformer;
+        VariableNotFound = variableNotFound;
+        ValueFormatter = valueFormatter;
+        AddToDictionaryDelelgate = addToDictionaryDelelgate;
+    }
+
     internal IDictionary<string, object> Variables { get; } = new Dictionary<string, object>();
     internal ITransformer Transformer { get; private set; } = new RegexTransformer();
     internal Func<string, string> VariableNotFound { get; private set; } = variableName => $"NOTFOUND:{variableName}";
@@ -116,4 +131,10 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     /// <returns></returns>
     public VariableReplacerConfiguration WithReplaceVariableBehaviour() =>
         WithAddToDictionaryDelelgate((dicionary, name, value) => dicionary[name] = value);
+
+    internal VariableReplacerConfiguration Clone() =>
+        new(CopyDictionary(Variables), Transformer, VariableNotFound, ValueFormatter, AddToDictionaryDelelgate);
+
+    private static IDictionary<string, object> CopyDictionary(IDictionary<string, object> source) =>
+        source.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 }
