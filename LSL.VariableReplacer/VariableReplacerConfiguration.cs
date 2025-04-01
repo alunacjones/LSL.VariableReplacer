@@ -9,8 +9,14 @@ namespace LSL.VariableReplacer;
 /// </summary>
 public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableReplacerConfiguration>
 {
-    internal VariableReplacerConfiguration() {}
-    
+    internal VariableReplacerConfiguration(): this(
+        new Dictionary<string, object>(),
+        new RegexTransformer(),
+        variableName => $"NOTFOUND:{variableName}",
+        value => $"{value}",
+        (dictionary, name, value) => dictionary.Add(name, value)
+    ) {}
+
     internal VariableReplacerConfiguration(
         IDictionary<string, object> variables,
         ITransformer transformer,
@@ -25,18 +31,16 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
         AddToDictionaryDelelgate = addToDictionaryDelelgate;
     }
 
-    internal IDictionary<string, object> Variables { get; } = new Dictionary<string, object>();
-    internal ITransformer Transformer { get; private set; } = new RegexTransformer();
-    internal Func<string, string> VariableNotFound { get; private set; } = variableName => $"NOTFOUND:{variableName}";
-    internal Func<object, string> ValueFormatter { get; private set; } = value => $"{value}";
-    internal Action<IDictionary<string, object>, string, object> AddToDictionaryDelelgate = (dictionary, name, value) => dictionary.Add(name, value);
+    internal IDictionary<string, object> Variables { get; } 
+    internal ITransformer Transformer { get; private set; }
+    internal Func<string, string> VariableNotFound { get; private set; }
+    internal Func<object, string> ValueFormatter { get; private set; }
+    internal Action<IDictionary<string, object>, string, object> AddToDictionaryDelelgate { get; private set; }
 
     /// <inheritdoc/>
     public VariableReplacerConfiguration AddVariable(string name, object value)
     {
-        Guard.IsNotNull(name, nameof(name));
-
-        AddToDictionaryDelelgate(Variables, name, value);
+        AddToDictionaryDelelgate(Variables, Guard.IsNotNull(name, nameof(name)), value);
         return this;
     }
 
@@ -51,9 +55,7 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     /// <returns></returns>
     public VariableReplacerConfiguration WithTransformer(ITransformer transformer)
     {
-        Guard.IsNotNull(transformer, nameof(transformer));
-
-        Transformer = transformer;
+        Transformer = Guard.IsNotNull(transformer, nameof(transformer));
         return this;
     }
 
@@ -85,9 +87,7 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     /// <returns></returns>
     public VariableReplacerConfiguration WhenVariableNotFound(Func<string, string> whenVariableNotFound)
     {
-        Guard.IsNotNull(whenVariableNotFound, nameof(whenVariableNotFound));
-
-        VariableNotFound = whenVariableNotFound;
+        VariableNotFound = Guard.IsNotNull(whenVariableNotFound, nameof(whenVariableNotFound));
         return this;
     }
 
@@ -110,19 +110,15 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     /// <param name="formatter"></param>
     /// <returns></returns>
     public VariableReplacerConfiguration WithValueFormatter(Func<object, string> formatter)
-    {
-        Guard.IsNotNull(formatter, nameof(formatter));
-
-        ValueFormatter = formatter;
+    {        
+        ValueFormatter = Guard.IsNotNull(formatter, nameof(formatter));
         return this;
     }
 
     /// <inheritdoc/>
     public VariableReplacerConfiguration WithAddToDictionaryDelelgate(Action<IDictionary<string, object>, string, object> action)
-    {
-        Guard.IsNotNull(action, nameof(action));
-
-        AddToDictionaryDelelgate = action;
+    {        
+        AddToDictionaryDelelgate = Guard.IsNotNull(action, nameof(action));
         return this;
     }
 
