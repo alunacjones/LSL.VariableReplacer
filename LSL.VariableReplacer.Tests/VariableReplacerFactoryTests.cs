@@ -102,6 +102,32 @@ public class VariableReplacerFactoryTests
     }
 
     [Test]
+    public void VariableReplacerFactory_WhenWeClone_ThenTheNewReplacerShouldNotAffectTheOriginal()
+    {
+        var sut = new VariableReplacerFactory()
+            .Build(c => c.AddVariables(new Dictionary<string, object>
+            {
+                ["FirstName"] = "Al",
+                ["LastName"] = "Jones",
+                ["FullName"] = "$(FirstName) $(LastName)"
+            }));
+
+        sut.ReplaceVariables("Hello $(FullName). Can I call you $(FirstName)?")
+            .Should()
+            .Be("Hello Al Jones. Can I call you Al?");
+
+        var sut2 = sut.CloneAndConfigure(c => c.WithReplaceVariableBehaviour()
+            .AddVariable("FirstName", "Other"));
+
+        sut2.ReplaceVariables("Hello $(FullName). Can I call you $(FirstName)?")
+            .Should()
+            .Be("Hello Other Jones. Can I call you Other?");
+
+        sut.Variables["FirstName"].Should().Be("Al");
+        sut2.Variables["FirstName"].Should().Be("Other");
+    }    
+
+    [Test]
     public void VariableReplacerFactory_GivenABuildThatThrowsWhenAVariableIsNotFound_ItShouldThrowTheExpectedException()
     {
         var sut = new VariableReplacerFactory()

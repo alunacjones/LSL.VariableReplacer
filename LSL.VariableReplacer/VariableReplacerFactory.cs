@@ -17,7 +17,11 @@ public class VariableReplacerFactory
     {
         Guard.IsNotNull(configurator, nameof(configurator));
 
-        var configuration = new VariableReplacerConfiguration();
+        return InnerBuild(new VariableReplacerConfiguration(), configurator);
+    }
+
+    internal static IVariableReplacer InnerBuild(VariableReplacerConfiguration configuration, Action<VariableReplacerConfiguration> configurator)
+    {
         configurator.Invoke(configuration);
 
         return new VariableReplacer(configuration);
