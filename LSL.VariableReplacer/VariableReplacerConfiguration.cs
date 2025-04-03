@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace LSL.VariableReplacer;
 
@@ -38,11 +39,8 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     internal Action<IDictionary<string, object>, string, object> AddToDictionaryDelelgate { get; private set; }
 
     /// <inheritdoc/>
-    public VariableReplacerConfiguration AddVariable(string name, object value)
-    {
-        AddToDictionaryDelelgate(Variables, Guard.IsNotNull(name, nameof(name)), value);
-        return this;
-    }
+    public VariableReplacerConfiguration AddVariable(string name, object value) => 
+        ReturnThis(() => AddToDictionaryDelelgate(Variables, Guard.IsNotNull(name, nameof(name)), value));
 
     /// <summary>
     /// Use a custom transformer
@@ -53,14 +51,11 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     /// </remarks>
     /// <param name="transformer">A custom transformer</param>
     /// <returns></returns>
-    public VariableReplacerConfiguration WithTransformer(ITransformer transformer)
-    {
-        Transformer = Guard.IsNotNull(transformer, nameof(transformer));
-        return this;
-    }
+    public VariableReplacerConfiguration WithTransformer(ITransformer transformer) => 
+        ReturnThis(() => Transformer = Guard.IsNotNull(transformer, nameof(transformer)));
 
     /// <summary>
-    /// Customise the pattern used for the default Regex-based transformer
+    /// Customise the Regex-based transformer
     /// </summary>
     /// <param name="variablePlaceholderPrefix"></param>
     /// <param name="variablePlaceholderSuffix"></param>
@@ -69,27 +64,40 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     /// Based on what the provided command is it can then return a modified version
     /// of the value if required.
     /// </param>
+    /// <param name="regexOptions">
+    /// The <see cref="RegexOptions"/> to configure the transformer with.
+    /// If not set then <c>RegexOptions.Compiled</c> will be used
+    /// </param>
+    /// <param name="regexTimeOut">
+    /// The timeout for the regular expression.
+    /// If not set then it defaults to 10 seconds
+    /// </param>
     /// <returns></returns>
     public VariableReplacerConfiguration WithDefaultTransformer(
         string variablePlaceholderPrefix = "$(",
         string variablePlaceholderSuffix = ")",
-        CommandProcessingDelegate commandProcessor = null) =>
-        WithTransformer(new RegexTransformer(variablePlaceholderPrefix, variablePlaceholderSuffix, commandProcessor));
+        CommandProcessingDelegate commandProcessor = null,
+        RegexOptions? regexOptions = null,
+        TimeSpan? regexTimeOut = null) =>        
+        WithTransformer(new RegexTransformer(
+            variablePlaceholderPrefix,
+            variablePlaceholderSuffix,
+            commandProcessor,
+            regexOptions,
+            regexTimeOut));
 
     /// <summary>
     /// Provide a custom replacement string
     /// for a variable placeholder if it is not found
     /// </summary>
     /// <remarks>
-    /// An exception can be thrown instead of returning a string
+    /// An exception can be thrown instead of returning a string.
+    /// The string passed into the function is the name of the variable.
     /// </remarks>
     /// <param name="whenVariableNotFound"></param>
     /// <returns></returns>
-    public VariableReplacerConfiguration WhenVariableNotFound(Func<string, string> whenVariableNotFound)
-    {
-        VariableNotFound = Guard.IsNotNull(whenVariableNotFound, nameof(whenVariableNotFound));
-        return this;
-    }
+    public VariableReplacerConfiguration WhenVariableNotFound(Func<string, string> whenVariableNotFound) => 
+        ReturnThis(() => VariableNotFound = Guard.IsNotNull(whenVariableNotFound, nameof(whenVariableNotFound)));
 
     /// <summary>
     /// Throw an exception if a variable is not found
@@ -109,18 +117,12 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     /// </remarks>
     /// <param name="formatter"></param>
     /// <returns></returns>
-    public VariableReplacerConfiguration WithValueFormatter(Func<object, string> formatter)
-    {        
-        ValueFormatter = Guard.IsNotNull(formatter, nameof(formatter));
-        return this;
-    }
+    public VariableReplacerConfiguration WithValueFormatter(Func<object, string> formatter) => 
+        ReturnThis(() => ValueFormatter = Guard.IsNotNull(formatter, nameof(formatter)));
 
     /// <inheritdoc/>
-    public VariableReplacerConfiguration WithAddToDictionaryDelelgate(Action<IDictionary<string, object>, string, object> action)
-    {        
-        AddToDictionaryDelelgate = Guard.IsNotNull(action, nameof(action));
-        return this;
-    }
+    public VariableReplacerConfiguration WithAddToDictionaryDelelgate(Action<IDictionary<string, object>, string, object> action) => 
+        ReturnThis(() => AddToDictionaryDelelgate = Guard.IsNotNull(action, nameof(action)));
 
     /// <summary>
     /// Uses replace variable behaviour when
@@ -131,8 +133,18 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
         WithAddToDictionaryDelelgate((dicionary, name, value) => dicionary[name] = value);
 
     internal VariableReplacerConfiguration Clone() =>
-        new(CopyDictionary(Variables), Transformer, VariableNotFound, ValueFormatter, AddToDictionaryDelelgate);
+        new(CopyDictionary(Variables),
+            Transformer,
+            VariableNotFound,
+            ValueFormatter,
+            AddToDictionaryDelelgate);
 
     private static IDictionary<string, object> CopyDictionary(IDictionary<string, object> source) =>
         source.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+    private VariableReplacerConfiguration ReturnThis(Action toRun)
+    {
+        toRun();
+        return this;
+    }
 }

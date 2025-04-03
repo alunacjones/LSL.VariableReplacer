@@ -5,7 +5,7 @@
 # LSL.VariableReplacer
 
 A library to provide variable replacement functionality. A source string can be taken by a configured variable replacer
-and a prcoessed string will be returned by the use of the configured variable replacer.
+and a processed string will be returned by the use of the configured variable replacer.
 
 Each variable value can reference other variables and a cyclic reference check will be performed upon execution
 of the `ReplaceVariables` method of a created `IVariableReplacer`
@@ -23,8 +23,10 @@ var result = replacer.ReplaceVariables("Hi $(name)");
 // result will have the value "Hi Als"
 ```
 
-This default settings expect a variable placeholder should be of the format `$(VariableName)`
+The default settings expect a variable placeholder to be of the format `$(VariableName)`
 
+<!-- HIDE -->
 ## Futher Documentation
 
 More in-depth documentation can be found [here](https://github.com/alunacjones/LSL.VariableReplacer/blob/master/docs/index.md)
+<!-- END:HIDE -->

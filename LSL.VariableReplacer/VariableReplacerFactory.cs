@@ -5,14 +5,9 @@ namespace LSL.VariableReplacer;
 /// <summary>
 /// A factory for creating a variable replacer
 /// </summary>
-public class VariableReplacerFactory
+public class VariableReplacerFactory : IVariableReplacerFactory
 {
-    /// <summary>
-    /// Builds a variable replacer using the provided
-    /// configurator
-    /// </summary>
-    /// <param name="configurator"></param>
-    /// <returns></returns>
+    /// <inheritdoc/>
     public IVariableReplacer Build(Action<VariableReplacerConfiguration> configurator) => 
         InnerBuild(new VariableReplacerConfiguration(), Guard.IsNotNull(configurator, nameof(configurator)));
 
