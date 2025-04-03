@@ -1,5 +1,5 @@
 site_name: LSL.VariableReplacer
-site_url: https://alunacjones/github.io/LSL.VariableReplacer
+site_url: https://alunacjones.github.io/LSL.VariableReplacer/
 extra_javascript:
   - javascript/tryIt.js
 markdown_extensions:

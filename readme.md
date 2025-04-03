@@ -28,5 +28,5 @@ The default settings expect a variable placeholder to be of the format `$(Variab
 <!-- HIDE -->
 ## Futher Documentation
 
-More in-depth documentation can be found [here](https://github.com/alunacjones/LSL.VariableReplacer/blob/master/docs/index.md)
+More in-depth documentation can be found [here](https://alunacjones.github.io/LSL.VariableReplacer/)
 <!-- END:HIDE -->
