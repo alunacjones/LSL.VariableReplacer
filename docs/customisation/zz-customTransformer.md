@@ -8,7 +8,7 @@ string and any subsequent variable replacement.
 
 Using this method we can use a custom transformer:
 
-```csharp { data-fiddle="bz0Pha" }
+```csharp { data-fiddle="ikxdMp" }
 var replacer = new VariableReplacerFactory()
     .Build(c => c
         .WithTransformer(new NotVeryUsefulTransformer())
@@ -27,8 +27,15 @@ The definition of the (aptly) named transformer is as follows:
 
     It does not cover all edge cases and can easily break.
 ```csharp
-public class NotVeryUsefulTransformer : ITransformer
+internal class NotVeryUsefulTransformer : ITransformer
 {
+    public VariableNameValidationResult IsAValidVariableName(string variableName) => 
+        variableName.Contains('$')
+            ? VariableNameValidationResult.Failed(
+                "The variable name cannot contain '$'"
+            )
+            : VariableNameValidationResult.Success();
+
     public string Transform(IVariableResolutionContext variableResolutionContext)
     {
         // Get the source string from the context

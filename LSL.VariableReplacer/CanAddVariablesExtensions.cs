@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace LSL.VariableReplacer;
 
@@ -42,11 +43,16 @@ public static class CanAddVariablesExtensions
     {
         environmentVariableFilter ??= key => true;
         var environmentVariables = Environment.GetEnvironmentVariables();
+        var transformer = (source as IHaveATransformer)?.Transformer;
+        var validateVariableName = transformer is null 
+            ? new Func<string, VariableNameValidationResult>(key => VariableNameValidationResult.Success()) 
+            : transformer.IsAValidVariableName;
 
         return environmentVariables
             .Keys
             .OfType<object>()
             .Select(k => k.ToString())
+            .Where(k => validateVariableName(k).Succeeded)
             .Where(environmentVariableFilter)
             .Select(key => new { key, value = environmentVariables[key].ToString() })
             .Aggregate(source, (agg, i) => agg.AddVariable($"{prefix}{i.key}", i.value));
@@ -61,26 +67,37 @@ public static class CanAddVariablesExtensions
     /// <typeparam name="TSelf"></typeparam>
     /// <param name="source"></param>
     /// <param name="value"></param>
+    /// <param name="configurator"></param>
     /// <returns></returns>
-    public static TSelf AddVariablesFromObject<TSelf>(this TSelf source, object value)
+    public static TSelf AddVariablesFromObject<TSelf>(this TSelf source, object value, Action<VariablesFromObjectConfiguration> configurator = null)
         where TSelf : ICanAddVariables<TSelf>
     {        
+        var configuration = new VariablesFromObjectConfiguration();
+        configurator?.Invoke(configuration);
+
         return AddProperties(Guard.IsNotNull(value, nameof(value)), string.Empty);
 
         TSelf AddProperties(object value, string path) => 
-            value.GetType().GetProperties()
+            value.GetType()
+                .GetProperties()
                 .Aggregate(source, (agg, property) =>
                 {
-                    if (property.PropertyType.IsPrimitive || property.PropertyType == typeof(string))
+                    if (IsAPrimitiveType(property.PropertyType))
                     {
-                        source.AddVariable(MakePath(), property.GetValue(value));
+                        if (IncludeProperty()) source.AddVariable(MakePath(), property.GetValue(value));
                         return agg;
                     }
 
                     AddProperties(property.GetValue(value), MakePath());
                     return agg;
 
-                    string MakePath() => path.Length == 0 ? $"{property.Name}" : $"{path}.{property.Name}";
+                    string MakePath() => 
+                        path.Length == 0 ? $"{property.Name}" : $"{path}{configuration.PropertyPathSeparator}{property.Name}";
+
+                    bool IncludeProperty() => 
+                        configuration.PropertyFilter == null || configuration.PropertyFilter(new PropertyFilterContext(property, path));
                 });
+
+        static bool IsAPrimitiveType(Type type) => type.IsPrimitive || type == typeof(string);
     }
 }

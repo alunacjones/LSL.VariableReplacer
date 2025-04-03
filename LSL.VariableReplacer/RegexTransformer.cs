@@ -12,10 +12,19 @@ internal class RegexTransformer(
 {
     public RegexTransformer() : this("$(", ")") {}
 
+    private static RegexOptions _defaultRegexOptions => RegexOptions.Compiled;
+    private static TimeSpan _defaultRegexTimeOut => TimeSpan.FromSeconds(10);
+    
     private readonly Lazy<Regex> _variableMatcher = new(() => new(
         $@"{Regex.Escape(variablePlaceholderPrefix)}([\w\.]+)(:(\w+))?{Regex.Escape(variablePlaceholderSuffix)}", 
-        regexOptions ?? RegexOptions.Compiled, 
-        regexTimeout ?? TimeSpan.FromSeconds(10)));
+        regexOptions ?? _defaultRegexOptions, 
+        regexTimeout ?? _defaultRegexTimeOut));
+
+    private readonly Lazy<Regex> _validVariableNameRegex = new(() => new(
+        @"^[\w\.]+$",
+        regexOptions ?? _defaultRegexOptions, 
+        regexTimeout ?? _defaultRegexTimeOut        
+    ));
 
     public string Transform(IVariableResolutionContext variableResolutionContext) => 
         _variableMatcher
@@ -31,6 +40,11 @@ internal class RegexTransformer(
                         command, 
                         variableResolutionContext.VariableResolver.Resolve(m.Groups[1].Value));
                 });
+
+    public VariableNameValidationResult IsAValidVariableName(string variableName) => 
+        _validVariableNameRegex.Value.IsMatch(variableName)
+            ? VariableNameValidationResult.Success()
+            : VariableNameValidationResult.Failed($"Variable name does not conform to the regular expression of {_validVariableNameRegex.Value}");
 }
 
 /// <summary>

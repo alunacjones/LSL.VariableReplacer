@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using DotNetEnv;
@@ -19,6 +18,15 @@ public class VariableReplacerFactoryTests
         sut.ReplaceVariables("Hello $(Unknown)")
             .Should()
             .Be("Hello NOTFOUND:Unknown");         
+    }
+
+    [Test]
+    public void VariableReplacerFactory_GivenABuildWithInvalidVariables_ItShouldThrowTheExpectedException()
+    {
+        new Action(() => new VariableReplacerFactory()
+            .Build(c => c.AddVariable("name:invalid", "value")))
+            .Should()
+            .Throw<InvalidVariableNamesException>();
     }
 
     [Test]
@@ -49,6 +57,91 @@ public class VariableReplacerFactoryTests
             .Should()
             .Be("Hello Als. True");         
     }        
+
+    [Test]
+    public void VariableReplacerFactory_GivenABuildWithVariablesFromAnObjectWithOptions_ItShouldReplaceAnyVariables()
+    {
+        var sut = new VariableReplacerFactory()
+            .Build(c => c.AddVariablesFromObject(new { 
+                name = "Als", 
+                age = 12, 
+                other = new { 
+                    codes = true
+                },
+                never = new {
+                    ommitted = true
+                } 
+            },
+            c => c
+                .WithPropertyPathSeparator("_")
+                .WithPropertyFilter(p => p.Property.Name != string.Empty && p.ParentPath != "never")
+            ));
+
+        sut.Variables.Should().BeEquivalentTo(new Dictionary<string, object>
+        {
+            ["name"] = "Als",
+            ["age"] = 12,
+            ["other_codes"] = true
+        });
+
+        sut.ReplaceVariables("Hello $(name). $(other_codes) $(never_omitted)")
+            .Should()
+            .Be("Hello Als. True NOTFOUND:never_omitted");
+    }
+
+    [Test]
+    public void VariableReplacerFactory_GivenABuildWithVariablesFromAnObjectWithAPropertyFilter_ItShouldReplaceAnyVariables()
+    {
+        var sut = new VariableReplacerFactory()
+            .Build(c => c.AddVariablesFromObject(new { 
+                name = "Als", 
+                age = 12, 
+                other = new { 
+                    codes = true
+                },
+                never = new {
+                    ommitted = true
+                } 
+            },
+            c => c.WithPropertyFilter(p => p.Property.Name != string.Empty && p.ParentPath != "never")
+        ));
+
+        sut.Variables.Should().BeEquivalentTo(new Dictionary<string, object>
+        {
+            ["name"] = "Als",
+            ["age"] = 12,
+            ["other.codes"] = true
+        });
+
+        sut.ReplaceVariables("Hello $(name). $(other.codes) $(never_omitted)")
+            .Should()
+            .Be("Hello Als. True NOTFOUND:never_omitted");
+    }    
+
+    [Test]
+    public void VariableReplacerFactory_GivenABuildWithVariablesFromAnObjectWithCustomPathSeparator_ItShouldReplaceAnyVariables()
+    {
+        var sut = new VariableReplacerFactory()
+            .Build(c => c.AddVariablesFromObject(new { 
+                name = "Als", 
+                age = 12, 
+                other = new { 
+                    codes = true
+                }
+            },
+            c => c.WithPropertyPathSeparator("_")));
+
+        sut.Variables.Should().BeEquivalentTo(new Dictionary<string, object>
+        {
+            ["name"] = "Als",
+            ["age"] = 12,
+            ["other_codes"] = true
+        });
+
+        sut.ReplaceVariables("Hello $(name). $(other_codes)")
+            .Should()
+            .Be("Hello Als. True");
+    }
 
     [Test]
     public void VariableReplacerFactory_GivenABuildWithACustomTransformer_ItShouldReplaceAnyVariables()
@@ -321,8 +414,15 @@ public class VariableReplacerFactoryTests
     }    
 }
 
-public class NotVeryUsefulTransformer : ITransformer
+internal class NotVeryUsefulTransformer : ITransformer
 {
+    public VariableNameValidationResult IsAValidVariableName(string variableName) => 
+        variableName.Contains('$')
+            ? VariableNameValidationResult.Failed(
+                "The variable name cannot contain '$'"
+            )
+            : VariableNameValidationResult.Success();
+
     public string Transform(IVariableResolutionContext variableResolutionContext)
     {
         // Get the source string from the context
@@ -356,7 +456,9 @@ public class NotVeryUsefulTransformer : ITransformer
                 }                
 
                 // resolve the variable value
-                var variableValue = variableResolutionContext.VariableResolver.Resolve(name.ToString());
+                var variableValue = variableResolutionContext
+                    .VariableResolver
+                    .Resolve(name.ToString());
 
                 // Append the value to our result StringBuilder
                 result.Append(variableValue);
