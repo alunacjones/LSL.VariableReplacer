@@ -16,8 +16,7 @@ document$.subscribe(() =>
             tryItLink.title = "Try it out in DotNetFiddle"
             tryItLink.className = "md-try-it-out md-icon";
             
-            var pre = c.querySelector("code");
+            var pre = c.querySelector("pre");
             pre.insertBefore(tryItLink, pre.firstChild);
-            console.log(c.firstChild)
         });
 });
