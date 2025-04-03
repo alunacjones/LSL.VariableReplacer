@@ -9,6 +9,11 @@ You can add environment variables to your variable collection as follows:
     The optional prefix used in this example is `ENV_`. This is the default prefix
     and the parameter could have been omitted in this instance
 
+!!! warning
+    If the `ITransformer` that is used for the variable replacer
+    cannot handle an environment variable's name then the environment
+    variable will be ignored
+
 ```csharp { data-fiddle="DMvr5v" }
 Environment.SetEnvironmentVariable("NAME", "Als");
 

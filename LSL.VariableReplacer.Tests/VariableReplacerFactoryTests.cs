@@ -13,11 +13,11 @@ public class VariableReplacerFactoryTests
     public void VariableReplacerFactory_GivenABuildWithNoVariables_ItShouldReplaceAnyVariablesWithNotFound()
     {
         var sut = new VariableReplacerFactory()
-            .Build(c => {});
+            .Build(c => { });
 
         sut.ReplaceVariables("Hello $(Unknown)")
             .Should()
-            .Be("Hello NOTFOUND:Unknown");         
+            .Be("Hello NOTFOUND:Unknown");
     }
 
     [Test]
@@ -37,14 +37,31 @@ public class VariableReplacerFactoryTests
 
         sut.ReplaceVariables("Hello $(name)")
             .Should()
-            .Be("Hello !Als!");         
-    }    
+            .Be("Hello !Als!");
+    }
+
+    [Test]
+    public void VariableReplacerFactory_GivenABuildWithVariablesAndACustomerTypeFormatter_ItShouldReplaceAnyVariables()
+    {
+        var now = new DateTime(2010, 1, 1);
+        var sut = new VariableReplacerFactory()
+            .Build(c => c.AddVariable("name", "Als").AddVariable("today", now)
+                .WithValueFormatter(o => o switch
+                {
+                    DateTime v => v.ToString("dd/MM/yyyy"),
+                    _ => $"{o}"
+                }));
+
+        sut.ReplaceVariables("Hello $(name). Today is $(today)")
+            .Should()
+            .Be("Hello Als. Today is 01/01/2010");
+    }
 
     [Test]
     public void VariableReplacerFactory_GivenABuildWithVariablesFromAnObject_ItShouldReplaceAnyVariables()
     {
         var sut = new VariableReplacerFactory()
-            .Build(c => c.AddVariablesFromObject(new { name = "Als", age = 12, other = new { codes = true} }));
+            .Build(c => c.AddVariablesFromObject(new { name = "Als", age = 12, other = new { codes = true } }));
 
         sut.Variables.Should().BeEquivalentTo(new Dictionary<string, object>
         {
@@ -55,22 +72,25 @@ public class VariableReplacerFactoryTests
 
         sut.ReplaceVariables("Hello $(name). $(other.codes)")
             .Should()
-            .Be("Hello Als. True");         
-    }        
+            .Be("Hello Als. True");
+    }
 
     [Test]
     public void VariableReplacerFactory_GivenABuildWithVariablesFromAnObjectWithOptions_ItShouldReplaceAnyVariables()
     {
         var sut = new VariableReplacerFactory()
-            .Build(c => c.AddVariablesFromObject(new { 
-                name = "Als", 
-                age = 12, 
-                other = new { 
+            .Build(c => c.AddVariablesFromObject(new
+            {
+                name = "Als",
+                age = 12,
+                other = new
+                {
                     codes = true
                 },
-                never = new {
+                never = new
+                {
                     ommitted = true
-                } 
+                }
             },
             c => c
                 .WithPropertyPathSeparator("_")
@@ -93,15 +113,18 @@ public class VariableReplacerFactoryTests
     public void VariableReplacerFactory_GivenABuildWithVariablesFromAnObjectWithAPropertyFilter_ItShouldReplaceAnyVariables()
     {
         var sut = new VariableReplacerFactory()
-            .Build(c => c.AddVariablesFromObject(new { 
-                name = "Als", 
-                age = 12, 
-                other = new { 
+            .Build(c => c.AddVariablesFromObject(new
+            {
+                name = "Als",
+                age = 12,
+                other = new
+                {
                     codes = true
                 },
-                never = new {
+                never = new
+                {
                     ommitted = true
-                } 
+                }
             },
             c => c.WithPropertyFilter(p => p.Property.Name != string.Empty && p.ParentPath != "never")
         ));
@@ -116,16 +139,18 @@ public class VariableReplacerFactoryTests
         sut.ReplaceVariables("Hello $(name). $(other.codes) $(never_omitted)")
             .Should()
             .Be("Hello Als. True NOTFOUND:never_omitted");
-    }    
+    }
 
     [Test]
     public void VariableReplacerFactory_GivenABuildWithVariablesFromAnObjectWithCustomPathSeparator_ItShouldReplaceAnyVariables()
     {
         var sut = new VariableReplacerFactory()
-            .Build(c => c.AddVariablesFromObject(new { 
-                name = "Als", 
-                age = 12, 
-                other = new { 
+            .Build(c => c.AddVariablesFromObject(new
+            {
+                name = "Als",
+                age = 12,
+                other = new
+                {
                     codes = true
                 }
             },
@@ -190,7 +215,7 @@ public class VariableReplacerFactoryTests
 
         sut.ReplaceVariables("Hello $(FirstName) $(LastName). Can I call you $(FirstName)?")
             .Should()
-            .Be("Hello Al Jones. Can I call you Al?");         
+            .Be("Hello Al Jones. Can I call you Al?");
     }
 
     [Test]
@@ -206,7 +231,7 @@ public class VariableReplacerFactoryTests
 
         sut.ReplaceVariables("Hello $(FullName). Can I call you $(FirstName)?")
             .Should()
-            .Be("Hello Al Jones. Can I call you Al?");         
+            .Be("Hello Al Jones. Can I call you Al?");
     }
 
     [Test]
@@ -233,7 +258,7 @@ public class VariableReplacerFactoryTests
 
         sut.Variables["FirstName"].Should().Be("Al");
         sut2.Variables["FirstName"].Should().Be("Other");
-    }    
+    }
 
     [Test]
     public void VariableReplacerFactory_GivenABuildThatHasACustomMessageWhenNotFound_ItProduceTheExpectedResult()
@@ -244,7 +269,7 @@ public class VariableReplacerFactoryTests
         sut.ReplaceVariables("Hello $(Unknown)")
             .Should()
             .Be("Hello ERROR:Unknown");
-    }        
+    }
 
     [Test]
     public void VariableReplacerFactory_GivenABuildThatThrowsWhenAVariableIsNotFound_ItShouldThrowTheExpectedException()
@@ -254,8 +279,8 @@ public class VariableReplacerFactoryTests
 
         new Action(() => sut.ReplaceVariables("Hello $(Unknown)"))
             .Should()
-            .Throw<ArgumentException>().WithMessage("Variable 'Unknown' not found");    
-    }        
+            .Throw<ArgumentException>().WithMessage("Variable 'Unknown' not found");
+    }
 
     [Test]
     public void VariableReplacerFactory_GivenABuildWithCyclicRecursiveVariables_ItShouldTherowTheExpectedException()
@@ -265,7 +290,7 @@ public class VariableReplacerFactoryTests
             {
                 ["FirstName"] = "Al",
                 ["LastName"] = "Jones",
-                ["FullName"] = "$(FirstName) $(LastName) $(Other)",                
+                ["FullName"] = "$(FirstName) $(LastName) $(Other)",
                 ["Other"] = "Stuff $(Another)",
                 ["Another"] = "$(FullName)"
             }));
@@ -273,7 +298,7 @@ public class VariableReplacerFactoryTests
         new Action(() => sut.ReplaceVariables("Hello $(FullName). Can I call you $(FirstName)?"))
             .Should()
             .Throw<ArgumentException>().WithMessage("Cyclic dependency detected on path: FullName -> Other -> Another -> FullName");
-    }        
+    }
 
     [Test]
     public void VariableReplacerFactory_GivenABuildWithVariablesAndCustomVariableDelimeters_ItShouldReplaceAllVariables()
@@ -289,7 +314,7 @@ public class VariableReplacerFactoryTests
 
         sut.ReplaceVariables("Hello $${FirstName} $${LastName}. Can I call you $${FirstName}?")
             .Should()
-            .Be("Hello Al Jones. Can I call you Al?");         
+            .Be("Hello Al Jones. Can I call you Al?");
     }
 
     [Test]
@@ -306,8 +331,8 @@ public class VariableReplacerFactoryTests
 
         sut.ReplaceVariables("Hello $(FirstName) $(LastName).\n\r\n Can I call you $(FirstName)?")
             .Should()
-            .Be("Hello Al Jones.\n\r\n Can I call you Al?");         
-    }    
+            .Be("Hello Al Jones.\n\r\n Can I call you Al?");
+    }
 
     [Test]
     public void VariableReplacerFactory_GivenABuildWithCustomOptions_ItShouldReplaceAllVariables()
@@ -326,7 +351,7 @@ public class VariableReplacerFactoryTests
         var result = replacer.ReplaceVariables(
             "Hello [FirstName] [LastName]. Can I call you [FirstName]?"
         );
-    }        
+    }
 
     [TestCase("a/path")]
     [TestCase("a/path/")]
@@ -353,7 +378,7 @@ public class VariableReplacerFactoryTests
         sut.ReplaceVariables("Hello $(FullName). You normalised '$(Path)' to '$(Path:ensureSlash)'$(Other:trim)")
             .Should()
             .Be($"Hello Al Jones. You normalised '{path}' to 'a/path/'");
-    }    
+    }
 
     [Test]
     public void VariableReplacerFactory_GivenABuildWithEnvironmentVariables_ItShouldReplaceAllVariables()
@@ -392,12 +417,12 @@ public class VariableReplacerFactoryTests
                 .AddEnvironmentVariables(prefix: null));
 
         sut.Variables.Count.Should().BeGreaterThan(1);
-    }    
+    }
 
     [Test]
     public void VariableReplacerFactory_GivenABuildWithVariablesButTheDictionaryIsNull_ItShouldThrowTheExpectedException()
     {
-        new Action(() =>  new VariableReplacerFactory()
+        new Action(() => new VariableReplacerFactory()
             .Build(c => c.AddVariables(null))
         ).Should().Throw<ArgumentNullException>().WithMessage("Argument cannot be null (Parameter 'variableDictionary')");
     }
@@ -405,18 +430,18 @@ public class VariableReplacerFactoryTests
     [Test]
     public void VariableReplacerFactory_GivenABuildWithVariablesButWeAddAVariableWithANullKey_ItShouldThrowTheExpectedException()
     {
-        new Action(() =>  new VariableReplacerFactory()
+        new Action(() => new VariableReplacerFactory()
             .Build(c => c.AddVariables(new Dictionary<string, object>
             {
                 ["Name"] = "Als",
             }).AddVariable(null, null))
         ).Should().Throw<ArgumentNullException>().WithMessage("Argument cannot be null (Parameter 'name')");
-    }    
+    }
 }
 
 internal class NotVeryUsefulTransformer : ITransformer
 {
-    public VariableNameValidationResult IsAValidVariableName(string variableName) => 
+    public VariableNameValidationResult IsAValidVariableName(string variableName) =>
         variableName.Contains('$')
             ? VariableNameValidationResult.Failed(
                 "The variable name cannot contain '$'"
@@ -435,7 +460,7 @@ internal class NotVeryUsefulTransformer : ITransformer
 
         // Loop through each character in the string
         while (index < sourceString.Length)
-        {            
+        {
             var currentCharacter = sourceString[index];
 
             // Check to see if we have found the start of a variable
@@ -453,7 +478,7 @@ internal class NotVeryUsefulTransformer : ITransformer
                 {
                     name.Append(sourceString[index]);
                     index++;
-                }                
+                }
 
                 // resolve the variable value
                 var variableValue = variableResolutionContext
@@ -472,7 +497,7 @@ internal class NotVeryUsefulTransformer : ITransformer
             result.Append(currentCharacter);
 
             // Move to the next character
-            index++;       
+            index++;
         }
 
         // Return the variable-replaced result
