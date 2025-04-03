@@ -273,6 +273,19 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Adding Variables From An Object
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -284,6 +297,76 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#with-no-customisation" class="md-nav__link">
+    <span class="md-ellipsis">
+      With No Customisation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#with-a-custom-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      With a Custom Configuration
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="With a Custom Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#with-a-custom-property-path-separator" class="md-nav__link">
+    <span class="md-ellipsis">
+      With a Custom Property Path Separator
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#with-a-property-filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      With a Property Filter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#advanced-scenarios" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced Scenarios
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -448,6 +531,65 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#with-no-customisation" class="md-nav__link">
+    <span class="md-ellipsis">
+      With No Customisation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#with-a-custom-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      With a Custom Configuration
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="With a Custom Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#with-a-custom-property-path-separator" class="md-nav__link">
+    <span class="md-ellipsis">
+      With a Custom Property Path Separator
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#with-a-property-filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      With a Property Filter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#advanced-scenarios" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced Scenarios
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -463,13 +605,15 @@
 
 
 <h1 id="adding-variables-from-an-object">Adding Variables From An Object</h1>
-<p>You can also add an object's properties to the variable collection.</p>
+<p>You can also add an object's properties to the variable collection using the 
+<code>AddVariablesFromObject</code> method on the configuration object.</p>
+<h2 id="with-no-customisation">With No Customisation</h2>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Nested objects will be traversed and a composite key is generated based
 on the path to the property</p>
 </div>
-<div class="language-csharp highlight" data-fiddle="SBz54u"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kt">var</span><span class="w"> </span><span class="n">sut</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">VariableReplacerFactory</span><span class="p">()</span>
+<div class="language-csharp highlight" data-fiddle="SBz54u"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kt">var</span><span class="w"> </span><span class="n">replacer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">VariableReplacerFactory</span><span class="p">()</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="p">.</span><span class="n">Build</span><span class="p">(</span><span class="n">c</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="n">AddVariablesFromObject</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="p">{</span><span class="w"> </span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">        </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Als&quot;</span><span class="p">,</span><span class="w"> </span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">        </span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span><span class="w"> </span>
@@ -478,9 +622,65 @@ on the path to the property</p>
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">        </span><span class="p">}</span><span class="w"> </span>
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">    </span><span class="p">}));</span>
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="kt">var</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sut</span><span class="p">.</span><span class="n">ReplaceVariables</span><span class="p">(</span><span class="s">&quot;Hello $(name). $(other.codes)&quot;</span><span class="p">);</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="kt">var</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">replacer</span><span class="p">.</span><span class="n">ReplaceVariables</span><span class="p">(</span><span class="s">&quot;Hello $(name). $(other.codes)&quot;</span><span class="p">);</span>
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="c1">// result will be &quot;Hello Als. True&quot;</span>
 </span></code></pre></div>
+<h2 id="with-a-custom-configuration">With a Custom Configuration</h2>
+<p>If you use the optional <code>configurator</code> parameter then you can specify
+extra customisation as to how the object is queried and the variables are created.</p>
+<h3 id="with-a-custom-property-path-separator">With a Custom Property Path Separator</h3>
+<p>You can provide a string to use as an alternative to the default property path separator of <code>.</code>
+as follows:</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The value of the separator can cause the build of an <code>IVariableReplacer</code> to fail
+if the <code>ITransformer</code> that is utilised cannot handle a variable name that is used.</p>
+<p>The default transformer will throw an exception if a variable is added with a name
+that collides with its settings and provide information about how to fix the issue.</p>
+</div>
+<div class="language-csharp highlight" data-fiddle="PRK5bz"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kt">var</span><span class="w"> </span><span class="n">replacer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">VariableReplacerFactory</span><span class="p">()</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="p">.</span><span class="n">Build</span><span class="p">(</span><span class="n">c</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="n">AddVariablesFromObject</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="p">{</span><span class="w"> </span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">        </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Als&quot;</span><span class="p">,</span><span class="w"> </span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">        </span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span><span class="w"> </span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">        </span><span class="n">other</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="p">{</span><span class="w"> </span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">            </span><span class="n">codes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">true</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="n">c</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="n">WithPropertyPathSeparator</span><span class="p">(</span><span class="s">&quot;_&quot;</span><span class="p">)));</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="kt">var</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">replacer</span><span class="p">.</span><span class="n">ReplaceVariables</span><span class="p">(</span><span class="s">&quot;Hello $(name). $(other_codes)&quot;</span><span class="p">);</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="c1">// result will be &quot;Hello Als. True&quot;</span>
+</span></code></pre></div>
+<h3 id="with-a-property-filter">With a Property Filter</h3>
+<p>A filter can be passed in to allow you to filter properties from the passed in object.
+The following example shows how this can be performed on a property name and the
+object traversal path:</p>
+<div class="language-csharp highlight" data-fiddle="rBvd9J"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kt">var</span><span class="w"> </span><span class="n">replacer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">VariableReplacerFactory</span><span class="p">()</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="p">.</span><span class="n">Build</span><span class="p">(</span><span class="n">c</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="n">AddVariablesFromObject</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="p">{</span><span class="w"> </span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">        </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Als&quot;</span><span class="p">,</span><span class="w"> </span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">        </span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span><span class="w"> </span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">        </span><span class="n">other</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="p">{</span><span class="w"> </span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">            </span><span class="n">codes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">true</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">        </span><span class="p">},</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">        </span><span class="n">never</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">            </span><span class="n">ommitted</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">true</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">        </span><span class="p">}</span><span class="w"> </span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">    </span><span class="n">c</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="n">WithPropertyFilter</span><span class="p">(</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">        </span><span class="n">p</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">Property</span><span class="p">.</span><span class="n">Name</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kt">string</span><span class="p">.</span><span class="n">Empty</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">ParentPath</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s">&quot;never&quot;</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">    </span><span class="p">)</span>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="p">));</span>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="kt">var</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">replacer</span><span class="p">.</span><span class="n">ReplaceVariables</span><span class="p">(</span>
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="w">    </span><span class="s">&quot;Hello $(name). $(other.codes) $(never_omitted)&quot;</span>
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="p">);</span>
+</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>
+</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a><span class="c1">// result will be &quot;Hello Als. True NOTFOUND:never_omitted&quot;);</span>
+</span></code></pre></div>
+<h3 id="advanced-scenarios">Advanced Scenarios</h3>
+<p>If you require more advanced scenarios for inspecting an object then it is probably best
+to use a third party library for querying an object and extracting data.</p>
 
 
 

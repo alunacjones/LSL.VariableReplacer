@@ -335,6 +335,19 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Value Formatter
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -346,6 +359,43 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#basic-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Example
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#per-type-formatting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Per Type Formatting
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -448,6 +498,32 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#basic-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Example
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#per-type-formatting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Per Type Formatting
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -465,7 +541,13 @@
 <h1 id="value-formatter">Value Formatter</h1>
 <p>The default value formatter will return the <code>ToString</code> value of the variable. A <code>null</code> value will
 return an empty string.</p>
-<p>Configuring a custom behaviour e.g. to format certain types can be provided as shown below:</p>
+<h2 id="basic-example">Basic Example</h2>
+<p>Configuring a custom behaviour to format the variable value can be provided as shown below:</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The value formatter can be used to format different types of object
+dependent on your needs.</p>
+</div>
 <div class="language-csharp highlight" data-fiddle="qEOrwv"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kt">var</span><span class="w"> </span><span class="n">replacer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">VariableReplacerFactory</span><span class="p">()</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="p">.</span><span class="n">Build</span><span class="p">(</span><span class="n">c</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="n">AddVariable</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Als&quot;</span><span class="p">)</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="p">.</span><span class="n">WithValueFormatter</span><span class="p">(</span><span class="n">o</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">$&quot;!{o}!&quot;</span><span class="p">));</span>
@@ -473,6 +555,21 @@ return an empty string.</p>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="kt">var</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">replacer</span><span class="p">.</span><span class="n">ReplaceVariables</span><span class="p">(</span><span class="s">&quot;Hello $(name)&quot;</span><span class="p">);</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1">// result will be &quot;Hello !Als!&quot;</span>
+</span></code></pre></div>
+<h2 id="per-type-formatting">Per Type Formatting</h2>
+<p>The following example will format a date in a <code>dd/mm/YYY' format. Any other data type
+will be formatted with</code>ToString`</p>
+<div class="language-csharp highlight" data-fiddle="eGJRX4"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kt">var</span><span class="w"> </span><span class="n">now</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">DateTime</span><span class="p">(</span><span class="mi">2010</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kt">var</span><span class="w"> </span><span class="n">replacer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">VariableReplacerFactory</span><span class="p">()</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="p">.</span><span class="n">Build</span><span class="p">(</span><span class="n">c</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="n">AddVariable</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Als&quot;</span><span class="p">).</span><span class="n">AddVariable</span><span class="p">(</span><span class="s">&quot;today&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">now</span><span class="p">)</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">        </span><span class="p">.</span><span class="n">WithValueFormatter</span><span class="p">(</span><span class="n">o</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">o</span><span class="w"> </span><span class="k">switch</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">        </span><span class="p">{</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">            </span><span class="n">DateTime</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">v</span><span class="p">.</span><span class="n">ToString</span><span class="p">(</span><span class="s">&quot;dd/MM/yyyy&quot;</span><span class="p">),</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">            </span><span class="n">_</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">$&quot;{o}&quot;</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">        </span><span class="p">}));</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="kt">var</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">replacer</span><span class="p">.</span><span class="n">ReplaceVariables</span><span class="p">(</span><span class="s">&quot;Hello $(name). Today is $(today)&quot;</span><span class="p">);</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="c1">// result will be &quot;Hello Als. Today is 01/01/2010&quot;</span>
 </span></code></pre></div>
 
 

@@ -471,6 +471,12 @@ In this case we are only matching the environment variable that we set up.</p>
 <p>The optional prefix used in this example is <code>ENV_</code>. This is the default prefix
 and the parameter could have been omitted in this instance</p>
 </div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If the <code>ITransformer</code> that is used for the variable replacer
+cannot handle an environment variable's name then the environment
+variable will be ignored</p>
+</div>
 <div class="language-csharp highlight" data-fiddle="DMvr5v"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">Environment</span><span class="p">.</span><span class="n">SetEnvironmentVariable</span><span class="p">(</span><span class="s">&quot;NAME&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Als&quot;</span><span class="p">);</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kt">var</span><span class="w"> </span><span class="n">replacer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">VariableReplacerFactory</span><span class="p">()</span>
