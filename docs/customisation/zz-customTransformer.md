@@ -62,7 +62,9 @@ public class NotVeryUsefulTransformer : ITransformer
                 }                
 
                 // resolve the variable value
-                var variableValue = variableResolutionContext.VariableResolver.Resolve(name.ToString());
+                var variableValue = variableResolutionContext
+                    .VariableResolver
+                    .Resolve(name.ToString());
 
                 // Append the value to our result StringBuilder
                 result.Append(variableValue);
