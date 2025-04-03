@@ -15,11 +15,8 @@ document$.subscribe(() =>
             });
             tryItLink.title = "Try it out in DotNetFiddle"
             tryItLink.className = "md-try-it-out md-icon";
-            //tryItLink.style.width = "fit-content";
-            //tryItLink.style.fontSize = "0.7em";
             
             var pre = c.querySelector("code");
             pre.insertBefore(tryItLink, pre.firstChild);
-            console.log(c.firstChild)
         });
 });
