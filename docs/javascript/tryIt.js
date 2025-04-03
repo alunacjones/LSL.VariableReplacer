@@ -3,16 +3,20 @@ document$.subscribe(() =>
     document.querySelectorAll("[data-fiddle]")
         .forEach(c =>
         {
-            var tryItLink = document.createElement("a");
-            tryItLink.innerHTML = "Try it!";
-            tryItLink.href = `https://dotnetfiddle.net/${c.getAttribute("data-fiddle")}`;
-            tryItLink.target = "_blank";
-            tryItLink.className = "md-button md-button--primary";
-            tryItLink.style.width = "fit-content";
-            tryItLink.style.fontSize = "0.7em";
+            var tryItLink = document.createElement("button");
+            tryItLink.addEventListener("click", () => {
+                var element = document.createElement("a");
+                element.style.display = "none";
+                element.href = `https://dotnetfiddle.net/${c.getAttribute("data-fiddle")}`;
+                element.target = "_blank";                
+                document.body.appendChild(element);
+                element.click();
+                document.body.removeChild(element);
+            });
+            tryItLink.title = "Try it out in DotNetFiddle"
+            tryItLink.className = "md-try-it-out md-icon";
             
-            var code = c.querySelector("code");
-            code.insertBefore(tryItLink, code.firstChild);
-            console.log(c.firstChild)
+            var pre = c.querySelector("pre");
+            pre.insertBefore(tryItLink, pre.firstChild);
         });
 });

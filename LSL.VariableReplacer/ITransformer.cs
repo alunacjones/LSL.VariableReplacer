@@ -3,13 +3,12 @@ namespace LSL.VariableReplacer;
 /// <summary>
 /// A source string transformer
 /// </summary>
-public interface ITransformer
+public interface ITransformer : ICanTransform
 {
     /// <summary>
-    /// Transforms the <see cref="IVariableResolutionContext.Source"/>
-    /// by replacing all variables within it
+    /// Checks if a variable name is valid for this transformer
     /// </summary>
-    /// <param name="variableResolutionContext"></param>
+    /// <param name="variableName"></param>
     /// <returns></returns>
-    string Transform(IVariableResolutionContext variableResolutionContext);
+    VariableNameValidationResult IsAValidVariableName(string variableName);
 }

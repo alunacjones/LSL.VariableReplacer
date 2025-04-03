@@ -4,10 +4,10 @@ using System.Linq;
 
 namespace LSL.VariableReplacer;
 
-internal class VariablePathWrapperTransformer(ITransformer transformer) : ITransformer
+internal class VariablePathWrapperTransformer(ITransformer transformer) : ICanTransform
 {
     private Stack<string> CollectedVariables { get; } = [];
-    
+
     public string Transform(IVariableResolutionContext variableResolutionContext)
     {
         var context = (TrackingVariableResolutionContext)variableResolutionContext;
