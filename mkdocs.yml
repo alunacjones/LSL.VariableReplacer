@@ -1,0 +1,20 @@
+site_name: LSL.VariableReplacer
+site_url: https://alunacjones/github.io/LSL.VariableReplacer
+extra_javascript:
+  - javascript/tryIt.js
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - admonition
+  - tables
+  - attr_list
+theme: 
+  name: material
+  features:
+    - content.code.copy  
+    - navigation.expand

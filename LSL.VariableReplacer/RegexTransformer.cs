@@ -14,7 +14,7 @@ internal class RegexTransformer(
 
     private readonly Lazy<Regex> _variableMatcher = new(() => new(
         $@"{Regex.Escape(variablePlaceholderPrefix)}([\w\.]+)(:(\w+))?{Regex.Escape(variablePlaceholderSuffix)}", 
-        regexOptions ?? (RegexOptions.Multiline | RegexOptions.Compiled), 
+        regexOptions ?? RegexOptions.Compiled, 
         regexTimeout ?? TimeSpan.FromSeconds(10)));
 
     public string Transform(IVariableResolutionContext variableResolutionContext) => 

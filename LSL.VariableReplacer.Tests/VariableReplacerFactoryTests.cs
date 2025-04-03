@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using DotNetEnv;
 using FluentAssertions;
 
@@ -47,6 +49,19 @@ public class VariableReplacerFactoryTests
             .Should()
             .Be("Hello Als. True");         
     }        
+
+    [Test]
+    public void VariableReplacerFactory_GivenABuildWithACustomTransformer_ItShouldReplaceAnyVariables()
+    {
+        var sut = new VariableReplacerFactory()
+            .Build(c => c
+                .WithTransformer(new NotVeryUsefulTransformer())
+                .AddVariable("name", "Als"));
+
+        sut.ReplaceVariables("Hi $name$. Where doth $name$ hail from?")
+            .Should()
+            .Be("Hi Als. Where doth Als hail from?");
+    }
 
     [Test]
     public void VariableReplacerFactory_GivenTheDefaultAddBehaviour_ItShouldThrowAnExceptionWhenAddingTheSameVariable()
@@ -128,6 +143,17 @@ public class VariableReplacerFactoryTests
     }    
 
     [Test]
+    public void VariableReplacerFactory_GivenABuildThatHasACustomMessageWhenNotFound_ItProduceTheExpectedResult()
+    {
+        var sut = new VariableReplacerFactory()
+            .Build(c => c.WhenVariableNotFound(variableName => $"ERROR:{variableName}"));
+
+        sut.ReplaceVariables("Hello $(Unknown)")
+            .Should()
+            .Be("Hello ERROR:Unknown");
+    }        
+
+    [Test]
     public void VariableReplacerFactory_GivenABuildThatThrowsWhenAVariableIsNotFound_ItShouldThrowTheExpectedException()
     {
         var sut = new VariableReplacerFactory()
@@ -173,6 +199,42 @@ public class VariableReplacerFactoryTests
             .Be("Hello Al Jones. Can I call you Al?");         
     }
 
+    [Test]
+    public void VariableReplacerFactory_GivenABuildWithCustomRegexOptions_ItShouldReplaceAllVariables()
+    {
+        var sut = new VariableReplacerFactory()
+            .Build(c => c
+                .WithDefaultTransformer(regexOptions: RegexOptions.Compiled)
+                .AddVariables(new Dictionary<string, object>
+                {
+                    ["FirstName"] = "Al",
+                    ["LastName"] = "Jones"
+                }));
+
+        sut.ReplaceVariables("Hello $(FirstName) $(LastName).\n\r\n Can I call you $(FirstName)?")
+            .Should()
+            .Be("Hello Al Jones.\n\r\n Can I call you Al?");         
+    }    
+
+    [Test]
+    public void VariableReplacerFactory_GivenABuildWithCustomOptions_ItShouldReplaceAllVariables()
+    {
+        var replacer = new VariableReplacerFactory()
+            .Build(c => c
+                .WithDefaultTransformer("[", "]", (command, value) => value, RegexOptions.None, TimeSpan.FromSeconds(1))
+                .AddVariables(new Dictionary<string, object>
+                {
+                    ["FirstName"] = "Al",
+                    ["LastName"] = "Jones"
+                }));
+
+        // our replacer will timeout after 1 second now
+        // our replacer's regular expression will not be compiled
+        var result = replacer.ReplaceVariables(
+            "Hello [FirstName] [LastName]. Can I call you [FirstName]?"
+        );
+    }        
+
     [TestCase("a/path")]
     [TestCase("a/path/")]
     public void VariableReplacerFactory_GivenABuildWithVariablesAndCustomVariableDelimetersAndKeyPreProcessor_ItShouldReplaceAllVariables(string path)
@@ -208,7 +270,7 @@ public class VariableReplacerFactoryTests
             ALS_NAME=Als
             """
         );
-        
+        Environment.SetEnvironmentVariable("NAME", "Als");
         var prefix = "ALS_";
 
         var sut = new VariableReplacerFactory()
@@ -257,4 +319,61 @@ public class VariableReplacerFactoryTests
             }).AddVariable(null, null))
         ).Should().Throw<ArgumentNullException>().WithMessage("Argument cannot be null (Parameter 'name')");
     }    
+}
+
+public class NotVeryUsefulTransformer : ITransformer
+{
+    public string Transform(IVariableResolutionContext variableResolutionContext)
+    {
+        // Get the source string from the context
+        var sourceString = variableResolutionContext.Source;
+
+        // we will use this to build the replaced string
+        var result = new StringBuilder();
+
+        var index = 0;
+
+        // Loop through each character in the string
+        while (index < sourceString.Length)
+        {            
+            var currentCharacter = sourceString[index];
+
+            // Check to see if we have found the start of a variable
+            if (currentCharacter == '$')
+            {
+                // we build the name of the varaible with this
+                var name = new StringBuilder();
+
+                // Move beyond the $ start character
+                index++;
+
+                // Collect all the variable name characters
+                // until we hit the closing $
+                while (sourceString[index] != '$')
+                {
+                    name.Append(sourceString[index]);
+                    index++;
+                }                
+
+                // resolve the variable value
+                var variableValue = variableResolutionContext.VariableResolver.Resolve(name.ToString());
+
+                // Append the value to our result StringBuilder
+                result.Append(variableValue);
+                index++;
+
+                // Continue processing the string
+                continue;
+            }
+
+            // Not at the start of a variable so just append the character
+            result.Append(currentCharacter);
+
+            // Move to the next character
+            index++;       
+        }
+
+        // Return the variable-replaced result
+        return result.ToString();
+    }
 }

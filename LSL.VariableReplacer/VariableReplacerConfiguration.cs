@@ -66,7 +66,7 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     /// </param>
     /// <param name="regexOptions">
     /// The <see cref="RegexOptions"/> to configure the transformer with.
-    /// If not set then <c>RegexOptions.Multiline | RegexOptions.Compiled</c> will be used
+    /// If not set then <c>RegexOptions.Compiled</c> will be used
     /// </param>
     /// <param name="regexTimeOut">
     /// The timeout for the regular expression.

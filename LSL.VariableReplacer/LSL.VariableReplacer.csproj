@@ -30,6 +30,16 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
+  <Target Name="CopyReadmeAndAddFrontMatter" BeforeTargets="Build">
+    <PropertyGroup>
+
+      <ReadmeContent>$([System.IO.File]::ReadAllText('../readme.md').TrimEnd())</ReadmeContent>
+      <FixedReadmeContent>$([System.Text.RegularExpressions.Regex]::Replace($(ReadmeContent), "&lt;!-- HIDE --&gt;(.|\n|\r)*&lt;!-- END:HIDE --&gt;",""))</FixedReadmeContent>
+    </PropertyGroup>
+
+    <WriteLinesToFile File="../docs/index.md" Overwrite="true" Lines="$(FixedReadmeContent)"/>
+  </Target>
+
   <ItemGroup>
     <None Include="..\readme.md" Pack="true" PackagePath=""/>
   </ItemGroup>   

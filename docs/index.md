@@ -24,9 +24,3 @@ var result = replacer.ReplaceVariables("Hi $(name)");
 ```
 
 The default settings expect a variable placeholder to be of the format `$(VariableName)`
-
-<!-- HIDE -->
-## Futher Documentation
-
-More in-depth documentation can be found [here](https://github.com/alunacjones/LSL.VariableReplacer/blob/master/docs/index.md)
-<!-- END:HIDE -->
