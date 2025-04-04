@@ -15,9 +15,12 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
         new RegexTransformer(),
         variableName => $"NOTFOUND:{variableName}",
         value => $"{value}",
-        (dictionary, name, value) => dictionary.Add(name, value)
+        DefaultAddToDictionaryBehaviour
     ) {}
 
+    private static void DefaultAddToDictionaryBehaviour(IDictionary<string, object> dictionary, string name, object value) =>
+        dictionary.Add(name, value);
+        
     internal VariableReplacerConfiguration(
         IDictionary<string, object> variables,
         ITransformer transformer,
@@ -133,6 +136,17 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     /// <returns></returns>
     public VariableReplacerConfiguration WithReplaceVariableBehaviour() =>
         WithAddToDictionaryDelelgate((dicionary, name, value) => dicionary[name] = value);
+
+
+    /// <summary>
+    /// Changes the variable 'add' behaviour to not allow duplicates
+    /// </summary>
+    /// <remarks>
+    /// The is the default behaviour
+    /// </remarks>
+    /// <returns></returns>
+    public VariableReplacerConfiguration WithNoDuplicateAddVariableBehaviour() =>
+        WithAddToDictionaryDelelgate(DefaultAddToDictionaryBehaviour);
 
     internal VariableReplacerConfiguration Clone() =>
         new(CopyDictionary(Variables),

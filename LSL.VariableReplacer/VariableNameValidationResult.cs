@@ -1,6 +1,3 @@
-using System;
-using System.Data.SqlTypes;
-
 namespace LSL.VariableReplacer;
 
 /// <summary>
