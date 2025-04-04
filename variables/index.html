@@ -604,7 +604,7 @@ content:</p>
 </span></code></pre></div>
 <h2 id="cyclic-references">Cyclic References</h2>
 <p>When resolving a variable, if a cyclic dependency is detected then
-an <code>ArgumentExceptoion</code> is hghlighting the cyclic path.</p>
+an <code>ArgumentException</code> is hghlighting the cyclic path.</p>
 <p>This example shows this in effect:</p>
 <div class="language-csharp highlight" data-fiddle="UtvWiS"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kt">var</span><span class="w"> </span><span class="n">replacer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">VariableReplacerFactory</span><span class="p">()</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="p">.</span><span class="n">Build</span><span class="p">(</span><span class="n">c</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="n">AddVariables</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Dictionary</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">object</span><span class="o">&gt;</span>
