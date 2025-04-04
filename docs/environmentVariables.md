@@ -1,3 +1,7 @@
+---
+tags:
+    - variables
+---
 # Using Environment Variables
 
 You can add environment variables to your variable collection as follows:

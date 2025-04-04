@@ -1,3 +1,7 @@
+---
+tags:
+    - variables
+---
 # Using Dictionaries
 
 A convenience method `AddVariables` can be

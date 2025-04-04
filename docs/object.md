@@ -1,3 +1,7 @@
+---
+tags:
+    - variables
+---
 # Adding Variables From An Object
 
 You can also add an object's properties to the variable collection using the 
