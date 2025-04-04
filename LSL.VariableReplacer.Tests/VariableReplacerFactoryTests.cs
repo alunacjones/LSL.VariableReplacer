@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using DotNetEnv;
@@ -169,6 +170,44 @@ public class VariableReplacerFactoryTests
     }
 
     [Test]
+    public void VariableReplacerFactory_GivenABuildWithVariablesFromAnObjectWithCustomPathSeparatorThatIsInvalid_ItShouldThrowAnException()
+    {
+        var exception = new Action(() => new VariableReplacerFactory()
+            .Build(c => c.AddVariablesFromObject(new
+            {
+                name = "Als",
+                age = 12,
+                other = new
+                {
+                    codes = true
+                }
+            },
+            c => c.WithPropertyPathSeparator(":")))
+        )
+        .Should()
+        .Throw<InvalidVariableNamesException>()
+        .Subject
+        .Single();
+
+        exception.Message.Should().Be(
+            """
+            There are variable names that do not conform to the convention for LSL.VariableReplacer.RegexTransformer
+
+            Variable 'other:codes': Variable name does not conform to the regular expression of ^[\w\.]+$
+
+            """);
+            
+        exception.ValidationErrors.Should()
+            .SatisfyRespectively(
+                e => 
+                {
+                    e.Message.Should().Be("Variable name does not conform to the regular expression of ^[\\w\\.]+$");
+                    e.VariableName.Should().Be("other:codes");
+                });
+    }
+
+
+    [Test]
     public void VariableReplacerFactory_GivenABuildWithACustomTransformer_ItShouldReplaceAnyVariables()
     {
         var sut = new VariableReplacerFactory()
@@ -283,7 +322,7 @@ public class VariableReplacerFactoryTests
     }
 
     [Test]
-    public void VariableReplacerFactory_GivenABuildWithCyclicRecursiveVariables_ItShouldTherowTheExpectedException()
+    public void VariableReplacerFactory_GivenABuildWithACyclicDepdency_ItShouldTherowTheExpectedException()
     {
         var sut = new VariableReplacerFactory()
             .Build(c => c.AddVariables(new Dictionary<string, object>
@@ -297,7 +336,9 @@ public class VariableReplacerFactoryTests
 
         new Action(() => sut.ReplaceVariables("Hello $(FullName). Can I call you $(FirstName)?"))
             .Should()
-            .Throw<ArgumentException>().WithMessage("Cyclic dependency detected on path: FullName -> Other -> Another -> FullName");
+            .Throw<CyclicDependencyException>().WithMessage("Cyclic dependency detected on path: FullName -> Other -> Another -> FullName")
+            .And
+            .Elements.Should().BeEquivalentTo(["FullName", "Other", "Another", "FullName"]);
     }
 
     [Test]

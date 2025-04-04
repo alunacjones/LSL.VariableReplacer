@@ -17,14 +17,11 @@ public class InvalidVariableNamesException(string message, IEnumerable<VariableN
     /// </summary>
     public IEnumerable<VariableNameProblem> ValidationErrors { get; } = validationErrors;
 
-    /// <inheritdoc/>
-    public static string ToMessage(string message, IEnumerable<VariableNameProblem> validationErrors)
-    {
-        return validationErrors.Aggregate(
+    internal static string ToMessage(string message, IEnumerable<VariableNameProblem> validationErrors) => 
+        validationErrors.Aggregate(
             new StringBuilder(message)
                 .AppendLine()
-                .AppendLine(), 
+                .AppendLine(),
             (agg, i) => agg.AppendLine($"Variable '{i.VariableName}': {i.Message}"))
             .ToString();
-    }
 }
