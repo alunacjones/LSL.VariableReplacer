@@ -488,14 +488,14 @@
 <p>Sometimes it may be beneficial to have a base <code>IVariableReplacer</code> that
 can be further customised later on in the execution of your application.</p>
 <p>This can be seen as utilising inheritance or even a partial definition of a variable replacer.</p>
-<p>In reality an <code>IVariableReplacer</code> is immutable so this is where the s<code>CloneAndConfigure</code> extension method 
+<p>In reality an <code>IVariableReplacer</code> is immutable so this is where the <code>CloneAndConfigure</code> extension method 
 of an <code>IVariableReplacer</code> comes into play:</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The cloning does a shallow clone of the variables and copies
 all the other settings across from the original <code>IVariableReplacer</code></p>
 </div>
-<div class="language-csharp highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kt">var</span><span class="w"> </span><span class="n">replacer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">VariableReplacerFactory</span><span class="p">()</span>
+<div class="language-csharp highlight" data-fiddle="qgWwVy"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kt">var</span><span class="w"> </span><span class="n">replacer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">VariableReplacerFactory</span><span class="p">()</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="p">.</span><span class="n">Build</span><span class="p">(</span><span class="n">c</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="n">AddVariables</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Dictionary</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">object</span><span class="o">&gt;</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="p">{</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">        </span><span class="na">[&quot;FirstName&quot;]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Al&quot;</span><span class="p">,</span>
