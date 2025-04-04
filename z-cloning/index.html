@@ -8,13 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://alunacjones.github.io/LSL.VariableReplacer/environmentVariables/">
+        <link rel="canonical" href="https://alunacjones.github.io/LSL.VariableReplacer/z-cloning/">
       
       
-        <link rel="prev" href="../dictionaries/">
+        <link rel="prev" href="../object/">
       
       
-        <link rel="next" href="../object/">
+        <link rel="next" href="../customisation/valueFormatter/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -22,7 +22,7 @@
     
     
       
-        <title>Using Environment Variables - LSL.VariableReplacer</title>
+        <title>Cloning and Rebuilding - LSL.VariableReplacer</title>
       
     
     
@@ -66,7 +66,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#using-environment-variables" class="md-skip">
+        <a href="#cloning-and-rebuilding" class="md-skip">
           Skip to content
         </a>
       
@@ -102,7 +102,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Using Environment Variables
+              Cloning and Rebuilding
             
           </span>
         </div>
@@ -239,19 +239,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../environmentVariables/" class="md-nav__link">
         
   
   
@@ -262,7 +253,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -293,10 +283,19 @@
       
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../z-cloning/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -307,6 +306,7 @@
   
 
       </a>
+      
     </li>
   
 
@@ -484,30 +484,47 @@
 
 
 
-<h1 id="using-environment-variables">Using Environment Variables</h1>
-<p>You can add environment variables to your variable collection as follows:</p>
+<h1 id="cloning-and-rebuilding">Cloning and Rebuilding</h1>
+<p>Sometimes it may be beneficial to have a base <code>IVariableReplacer</code> that
+can be further customised later on in the execution of your application.</p>
+<p>This can be seen as utilising inheritance or even a partial definition of a variable replacer.</p>
+<p>In reality an <code>IVariableReplacer</code> is immutable so this is where the s<code>CloneAndConfigure</code> extension method 
+of an <code>IVariableReplacer</code> comes into play:</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The optional first parameter allows for filtering of environment variables.
-In this case we are only matching the environment variable that we set up.</p>
-<p>The optional prefix used in this example is <code>ENV_</code>. This is the default prefix
-and the parameter could have been omitted in this instance</p>
+<p>The cloning does a shallow clone of the variables and copies
+all the other settings across from the original <code>IVariableReplacer</code></p>
 </div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>If the <code>ITransformer</code> that is used for the variable replacer
-cannot handle an environment variable's name then the environment
-variable will be ignored</p>
-</div>
-<div class="language-csharp highlight" data-fiddle="DMvr5v"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">Environment</span><span class="p">.</span><span class="n">SetEnvironmentVariable</span><span class="p">(</span><span class="s">&quot;NAME&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Als&quot;</span><span class="p">);</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kt">var</span><span class="w"> </span><span class="n">replacer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">VariableReplacerFactory</span><span class="p">()</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="p">.</span><span class="n">Build</span><span class="p">(</span><span class="n">c</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">c</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">        </span><span class="p">.</span><span class="n">AddEnvironmentVariables</span><span class="p">(</span><span class="n">key</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">key</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;NAME&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">prefix</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ENV_&quot;</span><span class="p">));</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="kt">var</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">replacer</span><span class="p">.</span><span class="n">ReplaceVariables</span><span class="p">(</span><span class="s">&quot;Hi $(ENV_NAME)&quot;</span><span class="p">);</span>
+<div class="language-csharp highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kt">var</span><span class="w"> </span><span class="n">replacer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">VariableReplacerFactory</span><span class="p">()</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="p">.</span><span class="n">Build</span><span class="p">(</span><span class="n">c</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="n">AddVariables</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Dictionary</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">object</span><span class="o">&gt;</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">        </span><span class="na">[&quot;FirstName&quot;]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Al&quot;</span><span class="p">,</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">        </span><span class="na">[&quot;LastName&quot;]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Jones&quot;</span><span class="p">,</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">        </span><span class="na">[&quot;FullName&quot;]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;$(FirstName) $(LastName)&quot;</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="p">}));</span>
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="c1">// result will be &quot;Hi Als&quot;</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="kt">var</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">replacer</span><span class="p">.</span><span class="n">ReplaceVariables</span><span class="p">(</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">    </span><span class="s">&quot;Hello $(FullName). Can I call you $(FirstName)?&quot;</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">);</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="c1">// result should be &quot;Hello Al Jones. Can I call you Al?&quot;</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="c1">// We configure the second replacer to allow us to replace existing variables</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="c1">// with the `WithReplaceVariableBehaviour` method below</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="kt">var</span><span class="w"> </span><span class="n">replacer2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">replacer</span><span class="p">.</span><span class="n">CloneAndConfigure</span><span class="p">(</span><span class="n">c</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">c</span>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">    </span><span class="p">.</span><span class="n">WithReplaceVariableBehaviour</span><span class="p">()</span>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">    </span><span class="p">.</span><span class="n">AddVariable</span><span class="p">(</span><span class="s">&quot;FirstName&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Other&quot;</span><span class="p">));</span>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="kt">var</span><span class="w"> </span><span class="n">result2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">replacer2</span><span class="p">.</span><span class="n">ReplaceVariables</span><span class="p">(</span>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="w">    </span><span class="s">&quot;Hello $(FullName). Can I call you $(FirstName)?&quot;</span>
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="p">);</span>
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="c1">// result2 should be &quot;Hello Other Jones. Can I call you Other?&quot;</span>
+</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>
+</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="kt">var</span><span class="w"> </span><span class="n">firstName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">replacer</span><span class="p">.</span><span class="n">Variables</span><span class="p">[</span><span class="s">&quot;FirstName&quot;</span><span class="p">];</span>
+</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a><span class="c1">// firstName should be &quot;Al&quot; as the clone will </span>
+</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a><span class="c1">// ensure that the initial replacer is preserved</span>
+</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>
+</span><span id="__span-0-29"><a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a><span class="kt">var</span><span class="w"> </span><span class="n">firstName2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">replacer2</span><span class="p">.</span><span class="n">Variables</span><span class="p">[</span><span class="s">&quot;FirstName&quot;</span><span class="p">];</span>
+</span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a><span class="c1">// firstName2 should be &quot;Other&quot;</span>
 </span></code></pre></div>
 
 
