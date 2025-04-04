@@ -81,7 +81,7 @@ public static class CanAddVariablesExtensions
                 {
                     if (IsAPrimitiveType(property.PropertyType))
                     {
-                        if (IncludeProperty()) source.AddVariable(MakePath(), property.GetValue(value));
+                        if (IncludeProperty()) source.AddVariable($"{configuration.Prefix}{MakePath()}", property.GetValue(value));
                         return agg;
                     }
 

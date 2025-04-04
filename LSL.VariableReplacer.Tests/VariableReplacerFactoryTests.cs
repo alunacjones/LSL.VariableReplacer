@@ -143,6 +143,40 @@ public class VariableReplacerFactoryTests
     }
 
     [Test]
+    public void VariableReplacerFactory_GivenABuildWithVariablesFromAnObjectWithAPropertyFilterAndPrefix_ItShouldReplaceAnyVariables()
+    {
+        var sut = new VariableReplacerFactory()
+            .Build(c => c.AddVariablesFromObject(new
+            {
+                name = "Als",
+                age = 12,
+                other = new
+                {
+                    codes = true
+                },
+                never = new
+                {
+                    ommitted = true
+                }
+            },
+            c => c
+                .WithPropertyFilter(p => p.Property.Name != string.Empty && p.ParentPath != "never")
+                .WithPrefix("MyObj.")
+        ));
+
+        sut.Variables.Should().BeEquivalentTo(new Dictionary<string, object>
+        {
+            ["MyObj.name"] = "Als",
+            ["MyObj.age"] = 12,
+            ["MyObj.other.codes"] = true
+        });
+
+        sut.ReplaceVariables("Hello $(MyObj.name). $(MyObj.other.codes) $(never_omitted)")
+            .Should()
+            .Be("Hello Als. True NOTFOUND:never_omitted");
+    }    
+
+    [Test]
     public void VariableReplacerFactory_GivenABuildWithVariablesFromAnObjectWithCustomPathSeparator_ItShouldReplaceAnyVariables()
     {
         var sut = new VariableReplacerFactory()
