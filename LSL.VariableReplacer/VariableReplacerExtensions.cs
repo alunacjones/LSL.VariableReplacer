@@ -15,7 +15,7 @@ public static class VariableReplacerExtensions
     /// The cloned settings are automatically
     /// setup to allow for variable replacement.
     /// Once the new <see cref="IVariableReplacer"/> is created
-    /// then it will be conigured to not allow duplicate variables
+    /// then it will be configured to not allow duplicate variables
     /// </remarks>
     /// <param name="source"></param>
     /// <param name="configurator"></param>
