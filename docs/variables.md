@@ -32,7 +32,7 @@ var result = replacer.ReplaceVariables(
 ## Cyclic References
 
 When resolving a variable, if a cyclic dependency is detected then
-an `ArgumentExceptoion` is hghlighting the cyclic path.
+an `ArgumentException` is hghlighting the cyclic path.
 
 This example shows this in effect:
 
