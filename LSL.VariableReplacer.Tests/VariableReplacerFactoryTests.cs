@@ -195,8 +195,8 @@ public class VariableReplacerFactoryTests
 
             Variable 'other:codes': Variable name does not conform to the regular expression of ^[\w\.]+$
 
-            """);
-            
+            """.ReplaceLineEndings());
+
         exception.ValidationErrors.Should()
             .SatisfyRespectively(
                 e => 
