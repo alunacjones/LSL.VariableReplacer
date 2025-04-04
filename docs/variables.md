@@ -48,5 +48,7 @@ var replacer = new VariableReplacerFactory()
     }));
 
 // This wil throw an exception
-var result =  replacer.ReplaceVariables("Hello $(FullName). Can I call you $(FirstName)?");
+var result = replacer.ReplaceVariables(
+    "Hello $(FullName). Can I call you $(FirstName)?"
+);
 ```
