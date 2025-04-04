@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using DotNetEnv;
@@ -167,6 +168,44 @@ public class VariableReplacerFactoryTests
             .Should()
             .Be("Hello Als. True");
     }
+
+    [Test]
+    public void VariableReplacerFactory_GivenABuildWithVariablesFromAnObjectWithCustomPathSeparatorThatIsInvalid_ItShouldThrowAnException()
+    {
+        var exception = new Action(() => new VariableReplacerFactory()
+            .Build(c => c.AddVariablesFromObject(new
+            {
+                name = "Als",
+                age = 12,
+                other = new
+                {
+                    codes = true
+                }
+            },
+            c => c.WithPropertyPathSeparator(":")))
+        )
+        .Should()
+        .Throw<InvalidVariableNamesException>()
+        .Subject
+        .Single();
+
+        exception.Message.Should().Be(
+            """
+            There are variable names that do not conform to the convention for LSL.VariableReplacer.RegexTransformer
+
+            Variable 'other:codes': Variable name does not conform to the regular expression of ^[\w\.]+$
+
+            """);
+            
+        exception.ValidationErrors.Should()
+            .SatisfyRespectively(
+                e => 
+                {
+                    e.Message.Should().Be("Variable name does not conform to the regular expression of ^[\\w\\.]+$");
+                    e.VariableName.Should().Be("other:codes");
+                });
+    }
+
 
     [Test]
     public void VariableReplacerFactory_GivenABuildWithACustomTransformer_ItShouldReplaceAnyVariables()

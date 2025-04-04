@@ -32,8 +32,11 @@ var result = replacer.ReplaceVariables(
 ## Cyclic References
 
 When resolving a variable, if a cyclic dependency is detected then
-an `ArgumentException` is thrown that highlights the cyclic path.
+a `CyclicReferenceException` is thrown that highlights the cyclic path.
 
+!!! note
+    Versions `1.0.30` and earlier would throw an `ArgumentException`
+    
 This example shows this in effect:
 
 ```csharp { data-fiddle="UtvWiS" }
