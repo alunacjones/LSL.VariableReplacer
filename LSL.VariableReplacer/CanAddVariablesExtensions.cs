@@ -43,10 +43,7 @@ public static class CanAddVariablesExtensions
     {
         environmentVariableFilter ??= key => true;
         var environmentVariables = Environment.GetEnvironmentVariables();
-        var transformer = (source as IHaveATransformer)?.Transformer;
-        var validateVariableName = transformer is null 
-            ? new Func<string, VariableNameValidationResult>(key => VariableNameValidationResult.Success()) 
-            : transformer.IsAValidVariableName;
+        var validateVariableName = source.GetVariableNameValidator();
 
         return environmentVariables
             .Keys

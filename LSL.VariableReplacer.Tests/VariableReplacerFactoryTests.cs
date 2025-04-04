@@ -283,7 +283,7 @@ public class VariableReplacerFactoryTests
     }
 
     [Test]
-    public void VariableReplacerFactory_GivenABuildWithCyclicRecursiveVariables_ItShouldTherowTheExpectedException()
+    public void VariableReplacerFactory_GivenABuildWithACyclicDepdency_ItShouldTherowTheExpectedException()
     {
         var sut = new VariableReplacerFactory()
             .Build(c => c.AddVariables(new Dictionary<string, object>
@@ -297,7 +297,9 @@ public class VariableReplacerFactoryTests
 
         new Action(() => sut.ReplaceVariables("Hello $(FullName). Can I call you $(FirstName)?"))
             .Should()
-            .Throw<ArgumentException>().WithMessage("Cyclic dependency detected on path: FullName -> Other -> Another -> FullName");
+            .Throw<CyclicDependencyException>().WithMessage("Cyclic dependency detected on path: FullName -> Other -> Another -> FullName")
+            .And
+            .Elements.Should().BeEquivalentTo(["FullName", "Other", "Another", "FullName"]);
     }
 
     [Test]

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,8 +12,7 @@ internal class VariablePathWrapperTransformer(ITransformer transformer) : ICanTr
         var context = (TrackingVariableResolutionContext)variableResolutionContext;
         if (CollectedVariables.Contains(context.VariableName))
         {
-            var path = string.Join(" -> ", CollectedVariables.Reverse().Concat([context.VariableName]));
-            throw new ArgumentException($"Cyclic dependency detected on path: {path}");
+            throw new CyclicDependencyException(CollectedVariables.Reverse().Concat([context.VariableName]));
         }
 
         CollectedVariables.Push(context.VariableName);
