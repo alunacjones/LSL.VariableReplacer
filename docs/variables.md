@@ -1,6 +1,7 @@
 ---
 tags:
     - variables
+    - cycle
 ---
 # Variables Within Variables
 
