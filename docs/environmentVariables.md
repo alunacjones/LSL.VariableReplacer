@@ -18,7 +18,7 @@ You can add environment variables to your variable collection as follows:
     cannot handle an environment variable's name then the environment
     variable will be ignored
 
-```csharp { data-fiddle="DMvr5v" }
+```csharp { data-fiddle="nRC1gP" }
 Environment.SetEnvironmentVariable("NAME", "Als");
 
 var replacer = new VariableReplacerFactory()

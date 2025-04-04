@@ -249,7 +249,7 @@ public class VariableReplacerFactoryTests
             .Should()
             .Be("Hello Al Jones. Can I call you Al?");
 
-        var sut2 = sut.CloneAndConfigure(c => c.WithReplaceVariableBehaviour()
+        var sut2 = sut.CloneAndConfigure(c => c
             .AddVariable("FirstName", "Other"));
 
         sut2.ReplaceVariables("Hello $(FullName). Can I call you $(FirstName)?")
