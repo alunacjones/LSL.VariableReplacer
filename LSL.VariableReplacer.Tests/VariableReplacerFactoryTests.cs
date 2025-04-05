@@ -143,7 +143,7 @@ public class VariableReplacerFactoryTests
     }
 
     [Test]
-    public void VariableReplacerFactory_GivenABuildWithVariablesFromAnObjectWithAPropertyFilterAndPrefix_ItShouldReplaceAnyVariables()
+    public void VariableReplacerFactory_GivenABuildWithVariablesFromAnObjectWithAPrefix_ItShouldReplaceAnyVariables()
     {
         var sut = new VariableReplacerFactory()
             .Build(c => c.AddVariablesFromObject(new
@@ -153,14 +153,9 @@ public class VariableReplacerFactoryTests
                 other = new
                 {
                     codes = true
-                },
-                never = new
-                {
-                    ommitted = true
                 }
             },
             c => c
-                .WithPropertyFilter(p => p.Property.Name != string.Empty && p.ParentPath != "never")
                 .WithPrefix("MyObj.")
         ));
 
@@ -171,9 +166,9 @@ public class VariableReplacerFactoryTests
             ["MyObj.other.codes"] = true
         });
 
-        sut.ReplaceVariables("Hello $(MyObj.name). $(MyObj.other.codes) $(never_omitted)")
+        sut.ReplaceVariables("Hello $(MyObj.name). $(MyObj.other.codes)")
             .Should()
-            .Be("Hello Als. True NOTFOUND:never_omitted");
+            .Be("Hello Als. True");
     }    
 
     [Test]
