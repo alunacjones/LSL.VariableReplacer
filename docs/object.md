@@ -51,7 +51,9 @@ var replacer = new VariableReplacerFactory()
     c => c.WithPrefix("MyObj.")
 ));
 
-var result = replacer.ReplaceVariables("Hello $(MyObj.name). $(MyObj.other.codes)");
+var result = replacer.ReplaceVariables(
+    "Hello $(MyObj.name). $(MyObj.other.codes)"
+);
 // result will be "Hello Als. True"
 ```
 ### With a Custom Property Path Separator
