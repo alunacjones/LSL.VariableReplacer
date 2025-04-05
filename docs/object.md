@@ -32,6 +32,29 @@ var result = replacer.ReplaceVariables("Hello $(name). $(other.codes)");
 If you use the optional `configurator` parameter then you can specify
 extra customisation as to how the object is queried and the variables are created.
 
+### With a Custom Variable Name Prefix
+
+You can provide a string that will prefix all the generated variable names if you need
+to further namespace the generated variable names.
+
+```csharp { data-fiddle="7xb5Jk" }
+var replacer = new VariableReplacerFactory()
+    .Build(c => c.AddVariablesFromObject(new
+    {
+        name = "Als",
+        age = 12,
+        other = new
+        {
+            codes = true
+        }
+    },
+    c => c
+        .WithPrefix("MyObj.")
+));
+
+var result = replacer.ReplaceVariables("Hello $(MyObj.name). $(MyObj.other.codes)");
+// result will be "Hello Als. True"
+```
 ### With a Custom Property Path Separator
 
 You can provide a string to use as an alternative to the default property path separator of `.`

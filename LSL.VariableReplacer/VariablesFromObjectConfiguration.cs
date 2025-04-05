@@ -10,6 +10,7 @@ public sealed class VariablesFromObjectConfiguration
 {
     internal string PropertyPathSeparator { get; private set; } = ".";
     internal Func<PropertyFilterContext, bool> PropertyFilter { get; private set; }
+    internal string Prefix { get; private set; } = string.Empty;
 
     /// <summary>
     /// Register a property filter
@@ -26,4 +27,12 @@ public sealed class VariablesFromObjectConfiguration
     /// <returns></returns>
     public VariablesFromObjectConfiguration WithPropertyPathSeparator(string propertyPathSeparator) => 
         this.ReturnThis(() => PropertyPathSeparator = Guard.IsNotNull(propertyPathSeparator, nameof(propertyPathSeparator)));
+
+    /// <summary>
+    /// Sets a prefix to apply to all generated variables
+    /// </summary>
+    /// <param name="prefix"></param>
+    /// <returns></returns>
+    public VariablesFromObjectConfiguration WithPrefix(string prefix) =>
+        this.ReturnThis(() => Prefix = Guard.IsNotNull(prefix, nameof(prefix)));
 }

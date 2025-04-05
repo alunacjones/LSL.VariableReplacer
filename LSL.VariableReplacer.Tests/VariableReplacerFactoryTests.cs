@@ -143,6 +143,35 @@ public class VariableReplacerFactoryTests
     }
 
     [Test]
+    public void VariableReplacerFactory_GivenABuildWithVariablesFromAnObjectWithAPrefix_ItShouldReplaceAnyVariables()
+    {
+        var sut = new VariableReplacerFactory()
+            .Build(c => c.AddVariablesFromObject(new
+            {
+                name = "Als",
+                age = 12,
+                other = new
+                {
+                    codes = true
+                }
+            },
+            c => c
+                .WithPrefix("MyObj.")
+        ));
+
+        sut.Variables.Should().BeEquivalentTo(new Dictionary<string, object>
+        {
+            ["MyObj.name"] = "Als",
+            ["MyObj.age"] = 12,
+            ["MyObj.other.codes"] = true
+        });
+
+        sut.ReplaceVariables("Hello $(MyObj.name). $(MyObj.other.codes)")
+            .Should()
+            .Be("Hello Als. True");
+    }    
+
+    [Test]
     public void VariableReplacerFactory_GivenABuildWithVariablesFromAnObjectWithCustomPathSeparator_ItShouldReplaceAnyVariables()
     {
         var sut = new VariableReplacerFactory()
