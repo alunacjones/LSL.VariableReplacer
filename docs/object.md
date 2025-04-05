@@ -48,8 +48,7 @@ var replacer = new VariableReplacerFactory()
             codes = true
         }
     },
-    c => c
-        .WithPrefix("MyObj.")
+    c => c.WithPrefix("MyObj.")
 ));
 
 var result = replacer.ReplaceVariables("Hello $(MyObj.name). $(MyObj.other.codes)");
