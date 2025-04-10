@@ -68,7 +68,7 @@ as follows:
     The default transformer will throw an exception if a variable is added with a name
     that collides with its settings and provide information about how to fix the issue.
 
-```csharp { data-fiddle="PRK5bz" }
+```csharp { data-fiddle="Ii1MBR" }
 var replacer = new VariableReplacerFactory()
     .Build(c => c.AddVariablesFromObject(new { 
         name = "Als", 
