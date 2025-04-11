@@ -55,5 +55,8 @@ Environment.SetEnvironmentVariable("ALS-NAME", "Als");
 // that will show the problematic environment variables
 var replacer = new VariableReplacerFactory()
     .Build(c => c
-        .AddEnvironmentVariables(c => c.DisableInvalidVariableNameFilter()));
+        .AddEnvironmentVariables(c => c
+            .DisableInvalidVariableNameFilter()
+            .WithEnvironmentVariableFilter(_ => true)
+            .WithPrefix("MyPrefix_")));
 ```
