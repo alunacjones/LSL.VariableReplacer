@@ -96,7 +96,7 @@ public static class CanAddVariablesExtensions
                 .GetProperties()
                 .Aggregate(source, (agg, property) =>
                 {
-                    if (IsAPrimitiveType(property.PropertyType))
+                    if (configuration.PrimitiveTypeChecker(property.PropertyType))
                     {
                         if (IncludeProperty()) source.AddVariable($"{configuration.Prefix}{MakePath()}", property.GetValue(value));
                         return agg;
@@ -111,7 +111,5 @@ public static class CanAddVariablesExtensions
                     bool IncludeProperty() =>
                         configuration.PropertyFilter == null || configuration.PropertyFilter(new PropertyFilterContext(property, path));
                 });
-
-        static bool IsAPrimitiveType(Type type) => type.IsPrimitive || type == typeof(string);
     }
 }

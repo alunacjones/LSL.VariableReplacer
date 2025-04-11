@@ -11,6 +11,11 @@ public sealed class VariablesFromObjectConfiguration
     internal string PropertyPathSeparator { get; private set; } = ".";
     internal Func<PropertyFilterContext, bool> PropertyFilter { get; private set; }
     internal string Prefix { get; private set; } = string.Empty;
+    internal Func<Type, bool> PrimitiveTypeChecker { get; private set; } = type => 
+        type.IsValueType ||
+        type.IsPrimitive ||
+        type == typeof(string) ||
+        Convert.GetTypeCode(type) != TypeCode.Object;
 
     /// <summary>
     /// Register a property filter
@@ -35,4 +40,17 @@ public sealed class VariablesFromObjectConfiguration
     /// <returns></returns>
     public VariablesFromObjectConfiguration WithPrefix(string prefix) =>
         this.ReturnThis(() => Prefix = Guard.IsNotNull(prefix, nameof(prefix)));
+
+    /// <summary>
+    /// Allows for a different implementation of the primitive type checking
+    /// lambda if the default doesn't cover all scenarios.
+    /// </summary>
+    /// <remarks>
+    /// The default implementation performs the following:
+    /// <c>type.IsValueType || type.IsPrimitive || type == typeof(string) || Convert.GetTypeCode(type) != TypeCode.Object</c>
+    /// </remarks>
+    /// <param name="primitiveTypeChecker"></param>
+    /// <returns></returns>
+    public VariablesFromObjectConfiguration WithPrimitiveTypeChecker(Func<Type, bool> primitiveTypeChecker) =>
+        this.ReturnThis(() => PrimitiveTypeChecker = primitiveTypeChecker);        
 }
