@@ -20,7 +20,7 @@ public static class CanAddVariablesExtensions
     /// <returns></returns>
     /// <exception cref="ArgumentException"></exception>
     public static TSelf AddVariables<TSelf>(this TSelf source, IDictionary<string, object> variableDictionary)
-        where TSelf : ICanAddVariables<TSelf> => 
+        where TSelf : ICanAddVariables<TSelf> =>
             Guard.IsNotNull(variableDictionary, nameof(variableDictionary))
                 .Aggregate(source, (agg, i) => agg.AddVariable(i.Key, i.Value));
 
@@ -39,20 +39,37 @@ public static class CanAddVariablesExtensions
     /// </param>
     /// <returns></returns>
     public static TSelf AddEnvironmentVariables<TSelf>(this TSelf source, Func<string, bool> environmentVariableFilter = null, string prefix = "ENV_")
+        where TSelf : ICanAddVariables<TSelf> => 
+        source.AddEnvironmentVariables(configuration =>
+        {
+            configuration
+                .WithEnvironmentVariableFilter(environmentVariableFilter ?? (key => true))
+                .WithPrefix(prefix);
+        });
+
+    /// <summary>
+    /// Adds environment variables to the variables
+    /// </summary>
+    /// <typeparam name="TSelf"></typeparam>
+    /// <param name="source"></param>
+    /// <param name="configurator">A required configurator of the environment variable adder</param>
+    /// <returns></returns>
+    public static TSelf AddEnvironmentVariables<TSelf>(this TSelf source, Action<VariablesFromEnvironmentVariablesConfiguration> configurator)
         where TSelf : ICanAddVariables<TSelf>
     {
-        environmentVariableFilter ??= key => true;
-        var environmentVariables = Environment.GetEnvironmentVariables();
+        var configuration = new VariablesFromEnvironmentVariablesConfiguration();
+        Guard.IsNotNull(configurator, nameof(configurator)).Invoke(configuration);
         var validateVariableName = source.GetVariableNameValidator();
+        var environmentVariables = Environment.GetEnvironmentVariables();
 
         return environmentVariables
             .Keys
             .OfType<object>()
             .Select(k => k.ToString())
-            .Where(k => validateVariableName(k).Succeeded)
-            .Where(environmentVariableFilter)
+            .Where(k => configuration.InvalidVariableNameFilterIsDisabled || validateVariableName(k).Succeeded)
+            .Where(configuration.EnvironmentVariableFilter)
             .Select(key => new { key, value = environmentVariables[key].ToString() })
-            .Aggregate(source, (agg, i) => agg.AddVariable($"{prefix}{i.key}", i.value));
+            .Aggregate(source, (agg, i) => agg.AddVariable($"{configuration.Prefix}{i.key}", i.value));
     }
 
     /// <summary>
@@ -68,13 +85,13 @@ public static class CanAddVariablesExtensions
     /// <returns></returns>
     public static TSelf AddVariablesFromObject<TSelf>(this TSelf source, object value, Action<VariablesFromObjectConfiguration> configurator = null)
         where TSelf : ICanAddVariables<TSelf>
-    {        
+    {
         var configuration = new VariablesFromObjectConfiguration();
         configurator?.Invoke(configuration);
 
         return AddProperties(Guard.IsNotNull(value, nameof(value)), string.Empty);
 
-        TSelf AddProperties(object value, string path) => 
+        TSelf AddProperties(object value, string path) =>
             value.GetType()
                 .GetProperties()
                 .Aggregate(source, (agg, property) =>
@@ -88,10 +105,10 @@ public static class CanAddVariablesExtensions
                     AddProperties(property.GetValue(value), MakePath());
                     return agg;
 
-                    string MakePath() => 
+                    string MakePath() =>
                         path.Length == 0 ? $"{property.Name}" : $"{path}{configuration.PropertyPathSeparator}{property.Name}";
 
-                    bool IncludeProperty() => 
+                    bool IncludeProperty() =>
                         configuration.PropertyFilter == null || configuration.PropertyFilter(new PropertyFilterContext(property, path));
                 });
 
