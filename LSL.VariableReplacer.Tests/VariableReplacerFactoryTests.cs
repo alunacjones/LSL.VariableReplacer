@@ -476,11 +476,7 @@ public class VariableReplacerFactoryTests
     [Test]
     public void VariableReplacerFactory_GivenABuildWithEnvironmentVariablesWIthInvalidNames_ItShouldThrowTheExpectedException()
     {
-        Env.LoadContents(
-            """
-            ALS-NAME=Als
-            """
-        );
+        Environment.SetEnvironmentVariable("ALS-NAME", "Als");
 
         new Action(() => new VariableReplacerFactory()
             .Build(c => c
