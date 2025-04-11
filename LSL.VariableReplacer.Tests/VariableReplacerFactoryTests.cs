@@ -474,6 +474,23 @@ public class VariableReplacerFactoryTests
     }
 
     [Test]
+    public void VariableReplacerFactory_GivenABuildWithEnvironmentVariablesWIthInvalidNames_ItShouldThrowTheExpectedException()
+    {
+        Env.LoadContents(
+            """
+            ALS-NAME=Als
+            """
+        );
+
+        new Action(() => new VariableReplacerFactory()
+            .Build(c => c
+                .AddEnvironmentVariables(c => c.DisableInvalidVariableNameFilter()))
+        )
+        .Should()
+        .Throw<InvalidVariableNamesException>();
+    }
+
+    [Test]
     public void VariableReplacerFactory_GivenABuildWithEnvironmentVariablesAndNoFilter_ItShouldContainTheExpectedVariables()
     {
         Env.LoadContents(

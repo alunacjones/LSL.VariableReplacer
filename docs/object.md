@@ -48,11 +48,12 @@ var replacer = new VariableReplacerFactory()
             codes = true
         }
     },
-    c => c
-        .WithPrefix("MyObj.")
+    c => c.WithPrefix("MyObj.")
 ));
 
-var result = replacer.ReplaceVariables("Hello $(MyObj.name). $(MyObj.other.codes)");
+var result = replacer.ReplaceVariables(
+    "Hello $(MyObj.name). $(MyObj.other.codes)"
+);
 // result will be "Hello Als. True"
 ```
 ### With a Custom Property Path Separator
@@ -67,7 +68,7 @@ as follows:
     The default transformer will throw an exception if a variable is added with a name
     that collides with its settings and provide information about how to fix the issue.
 
-```csharp { data-fiddle="PRK5bz" }
+```csharp { data-fiddle="Ii1MBR" }
 var replacer = new VariableReplacerFactory()
     .Build(c => c.AddVariablesFromObject(new { 
         name = "Als", 
