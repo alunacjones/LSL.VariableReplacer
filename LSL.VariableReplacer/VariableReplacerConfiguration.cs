@@ -148,8 +148,8 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     public VariableReplacerConfiguration WithNoDuplicateAddVariableBehaviour() =>
         WithAddToDictionaryDelelgate(DefaultAddToDictionaryBehaviour);
 
-    internal VariableReplacerConfiguration Clone() =>
-        new(CopyDictionary(Variables),
+    internal VariableReplacerConfiguration Clone(Func<IDictionary<string, object>, IDictionary<string, object>> dictionaryCloner = null) =>
+        new((dictionaryCloner ?? CopyDictionary)(Variables),
             Transformer,
             VariableNotFound,
             ValueFormatter,

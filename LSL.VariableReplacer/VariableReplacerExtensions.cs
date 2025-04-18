@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace LSL.VariableReplacer;
 
@@ -18,15 +19,19 @@ public static class VariableReplacerExtensions
     /// then it will be configured to not allow duplicate variables
     /// </remarks>
     /// <param name="source"></param>
-    /// <param name="configurator"></param>
+    /// <param name="configurator">A delegate to configure the cloned variable replacer</param>
+    /// <param name="dictionaryCloner">An optional dictionary cloner</param>
     /// <returns></returns>
-    public static IVariableReplacer CloneAndConfigure(this IVariableReplacer source, Action<VariableReplacerConfiguration> configurator)
+    public static IVariableReplacer CloneAndConfigure(
+        this IVariableReplacer source,
+        Action<VariableReplacerConfiguration> configurator,
+        Func<IDictionary<string, object>, IDictionary<string, object>> dictionaryCloner = null)
     {
         Guard.IsNotNull(source, nameof(source));
         Guard.IsNotNull(configurator, nameof(configurator));
 
         return VariableReplacerFactory.InnerBuild(
-            ((VariableReplacer)source).Configuration.Clone().WithReplaceVariableBehaviour(), 
+            ((VariableReplacer)source).Configuration.Clone(dictionaryCloner).WithReplaceVariableBehaviour(), 
             (config) => {
                 configurator.Invoke(config);
                 config.WithNoDuplicateAddVariableBehaviour();
