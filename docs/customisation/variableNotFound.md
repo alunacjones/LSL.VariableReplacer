@@ -32,7 +32,7 @@ is called `Unknown`.
 
 The following example shows how to set it up:
 
-```csharp { data-fiddle="mGLD7t" }
+```csharp { data-fiddle="sv6mtC" }
 var sut = new VariableReplacerFactory()
     .Build(c => c.ThrowIfVariableNotFound());
 
