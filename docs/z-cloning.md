@@ -60,7 +60,7 @@ var firstName2 = replacer2.Variables["FirstName"];
 
 ## Using the a custom dictionary cloner
 
-```csharp
+```csharp  { data-fiddle="qap6M7" }
 var replacer = new VariableReplacerFactory()
     .Build(c => c.AddVariables(new Dictionary<string, object>
     {
@@ -81,8 +81,8 @@ var result = replacer.ReplaceVariables(
 var replacer2 = replacer.CloneAndConfigure(c => c
     .AddVariable("FirstName", "Other"),
 
-    // THis custom cloner just returns the same dictionary
-    // which resulsts in any variable changes being replicated
+    // This custom cloner just returns the same dictionary
+    // which results in any variable changes being replicated
     // in `replacer` and `replacer2`
     originalDictionary => originalDictionary);
 
@@ -92,7 +92,7 @@ var result2 = replacer2.ReplaceVariables(
 // result2 should be "Hello Other Jones. Can I call you Other?"
 
 var firstName = replacer.Variables["FirstName"];
-// firstName should be "Other" as the 
+// firstName should be "Other" as  
 // we have shared the dictionary
 
 var firstName2 = replacer2.Variables["FirstName"];

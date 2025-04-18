@@ -8,7 +8,7 @@ string and any subsequent variable replacement.
 
 Using this method we can use a custom transformer:
 
-```csharp { data-fiddle="ikxdMp" }
+```csharp { data-fiddle="YIgz8Q" }
 var replacer = new VariableReplacerFactory()
     .Build(c => c
         .WithTransformer(new NotVeryUsefulTransformer())
