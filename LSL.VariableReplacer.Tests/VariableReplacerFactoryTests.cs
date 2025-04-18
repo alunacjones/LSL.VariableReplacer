@@ -96,6 +96,7 @@ public class VariableReplacerFactoryTests
             c => c
                 .WithPropertyPathSeparator("_")
                 .WithPropertyFilter(p => p.Property.Name != string.Empty && p.ParentPath != "never")
+                .WithPrimitiveTypeChecker(t => t.IsPrimitive || t == typeof(string))
             ));
 
         sut.Variables.Should().BeEquivalentTo(new Dictionary<string, object>
@@ -476,11 +477,7 @@ public class VariableReplacerFactoryTests
     [Test]
     public void VariableReplacerFactory_GivenABuildWithEnvironmentVariablesWIthInvalidNames_ItShouldThrowTheExpectedException()
     {
-        Env.LoadContents(
-            """
-            ALS-NAME=Als
-            """
-        );
+        Environment.SetEnvironmentVariable("ALS-NAME", "Als");
 
         new Action(() => new VariableReplacerFactory()
             .Build(c => c
