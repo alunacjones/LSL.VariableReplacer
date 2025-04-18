@@ -52,5 +52,5 @@ public sealed class VariablesFromObjectConfiguration
     /// <param name="primitiveTypeChecker"></param>
     /// <returns></returns>
     public VariablesFromObjectConfiguration WithPrimitiveTypeChecker(Func<Type, bool> primitiveTypeChecker) =>
-        this.ReturnThis(() => PrimitiveTypeChecker = primitiveTypeChecker);        
+        this.ReturnThis(() => PrimitiveTypeChecker = Guard.IsNotNull(primitiveTypeChecker, nameof(primitiveTypeChecker)));        
 }
