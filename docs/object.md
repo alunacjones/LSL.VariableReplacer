@@ -37,7 +37,7 @@ extra customisation as to how the object is queried and the variables are create
 You can provide a string that will prefix all the generated variable names if you need
 to further namespace the generated variable names.
 
-```csharp { data-fiddle="7xb5Jk" }
+```csharp { data-fiddle="aYlge7" }
 var replacer = new VariableReplacerFactory()
     .Build(c => c.AddVariablesFromObject(new
     {
