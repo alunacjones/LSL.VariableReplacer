@@ -2,6 +2,8 @@
 tags:
     - variables
     - cycle
+    - embed
+    - embedded
 ---
 # Variables Within Variables
 
