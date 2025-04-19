@@ -15,7 +15,7 @@ This method can be used to customise the message returned.
 !!! note
     Your method could throw an exception rather than return a replacement
 
-```csharp { data-fiddle="M0mR8V" }
+```csharp { data-fiddle="LSmJuG" }
 var replacer = new VariableReplacerFactory()
     .Build(c => c.WhenVariableNotFound(variableName => $"ERROR:{variableName}"));
 
