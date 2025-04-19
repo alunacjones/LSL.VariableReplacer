@@ -60,7 +60,7 @@ var firstName2 = replacer2.Variables["FirstName"];
 
 ## Using the a custom dictionary cloner
 
-```csharp  { data-fiddle="qap6M7" }
+```csharp  { data-fiddle="ZqwD3L" }
 var replacer = new VariableReplacerFactory()
     .Build(c => c.AddVariables(new Dictionary<string, object>
     {
