@@ -26,26 +26,26 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
         ITransformer transformer,
         Func<string, string> variableNotFound,
         Func<object, string> valueFormatter,
-        Action<IDictionary<string, object>, string, object> addToDictionaryDelelgate)
+        Action<IDictionary<string, object>, string, object> addToDictionaryDelegate)
     {
         Variables = variables;
         Transformer = transformer;
         VariableNotFound = variableNotFound;
         ValueFormatter = valueFormatter;
-        AddToDictionaryDelelgate = addToDictionaryDelelgate;
+        AddToDictionaryDelegate = addToDictionaryDelegate;
     }
 
     internal IDictionary<string, object> Variables { get; } 
     internal ITransformer Transformer { get; private set; }
     internal Func<string, string> VariableNotFound { get; private set; }
     internal Func<object, string> ValueFormatter { get; private set; }
-    internal Action<IDictionary<string, object>, string, object> AddToDictionaryDelelgate { get; private set; }
+    internal Action<IDictionary<string, object>, string, object> AddToDictionaryDelegate { get; private set; }
 
     ITransformer IHaveATransformer.Transformer => Transformer;
 
     /// <inheritdoc/>
     public VariableReplacerConfiguration AddVariable(string name, object value) => 
-        this.ReturnThis(() => AddToDictionaryDelelgate(Variables, Guard.IsNotNull(name, nameof(name)), value));
+        this.ReturnThis(() => AddToDictionaryDelegate(Variables, Guard.IsNotNull(name, nameof(name)), value));
 
     /// <summary>
     /// Use a custom transformer
@@ -65,7 +65,7 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     /// <param name="variablePlaceholderPrefix"></param>
     /// <param name="variablePlaceholderSuffix"></param>
     /// <param name="commandProcessor">
-    /// A delegate that accepts a <c>command</c> and a <c>value</c> paramter.
+    /// A delegate that accepts a <c>command</c> and a <c>value</c> parameter.
     /// Based on what the provided command is it can then return a modified version
     /// of the value if required.
     /// </param>
@@ -126,8 +126,8 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
         this.ReturnThis(() => ValueFormatter = Guard.IsNotNull(formatter, nameof(formatter)));
 
     /// <inheritdoc/>
-    public VariableReplacerConfiguration WithAddToDictionaryDelelgate(Action<IDictionary<string, object>, string, object> action) => 
-        this.ReturnThis(() => AddToDictionaryDelelgate = Guard.IsNotNull(action, nameof(action)));
+    public VariableReplacerConfiguration WithAddToDictionaryDelegate(Action<IDictionary<string, object>, string, object> action) => 
+        this.ReturnThis(() => AddToDictionaryDelegate = Guard.IsNotNull(action, nameof(action)));
 
     /// <summary>
     /// Uses replace variable behaviour when
@@ -135,7 +135,7 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     /// </summary>
     /// <returns></returns>
     public VariableReplacerConfiguration WithReplaceVariableBehaviour() =>
-        WithAddToDictionaryDelelgate((dicionary, name, value) => dicionary[name] = value);
+        WithAddToDictionaryDelegate((dictionary, name, value) => dictionary[name] = value);
 
 
     /// <summary>
@@ -146,14 +146,14 @@ public sealed class VariableReplacerConfiguration : ICanAddVariables<VariableRep
     /// </remarks>
     /// <returns></returns>
     public VariableReplacerConfiguration WithNoDuplicateAddVariableBehaviour() =>
-        WithAddToDictionaryDelelgate(DefaultAddToDictionaryBehaviour);
+        WithAddToDictionaryDelegate(DefaultAddToDictionaryBehaviour);
 
     internal VariableReplacerConfiguration Clone(Func<IDictionary<string, object>, IDictionary<string, object>> dictionaryCloner = null) =>
         new((dictionaryCloner ?? CopyDictionary)(Variables),
             Transformer,
             VariableNotFound,
             ValueFormatter,
-            AddToDictionaryDelelgate);
+            AddToDictionaryDelegate);
 
     private static IDictionary<string, object> CopyDictionary(IDictionary<string, object> source) =>
         source.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
