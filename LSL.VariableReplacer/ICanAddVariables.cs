@@ -23,5 +23,5 @@ public interface ICanAddVariables<TSelf>
     /// The default behaviour is to use <see cref="IDictionary{TKey, TValue}.Add"><c>Add</c></see>.
     /// This default behaviour raises an exception if a duplicate is added
     /// </remarks>    
-    TSelf WithAddToDictionaryDelelgate(Action<IDictionary<string, object>, string, object> action);
+    TSelf WithAddToDictionaryDelegate(Action<IDictionary<string, object>, string, object> action);
 }
