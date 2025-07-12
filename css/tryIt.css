@@ -1,0 +1,49 @@
+:root {
+    --md-try-it-out-icon: url('data:image/svg+xml,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22iso-8859-1%22%3F%3E%3C!--%20Uploaded%20to%3A%20SVG%20Repo%2C%20www.svgrepo.com%2C%20Generator%3A%20SVG%20Repo%20Mixer%20Tools%20--%3E%3Csvg%20fill%3D%22%23000000%22%20version%3D%221.1%22%20id%3D%22Capa_1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20%20viewBox%3D%22-2%20-2%2065%2065%22%20xml%3Aspace%3D%22preserve%22%3E%3Cg%20stroke-width%3D%22100%22%20style%3D%22fill%3Ablack%3Bstroke%3Ablack%3Bstroke-width%3A2.5%22%3E%3Cpath%20d%3D%22M45.563%2C29.174l-22-15c-0.307-0.208-0.703-0.231-1.031-0.058C22.205%2C14.289%2C22%2C14.629%2C22%2C15v30c0%2C0.371%2C0.205%2C0.711%2C0.533%2C0.884C22.679%2C45.962%2C22.84%2C46%2C23%2C46c0.197%2C0%2C0.394-0.059%2C0.563-0.174l22-15C45.836%2C30.64%2C46%2C30.331%2C46%2C30S45.836%2C29.36%2C45.563%2C29.174z%20M24%2C43.107V16.893L43.225%2C30L24%2C43.107z%22%2F%3E%3Cpath%20d%3D%22M30%2C0C13.458%2C0%2C0%2C13.458%2C0%2C30s13.458%2C30%2C30%2C30s30-13.458%2C30-30S46.542%2C0%2C30%2C0z%20M30%2C58C14.561%2C58%2C2%2C45.439%2C2%2C30S14.561%2C2%2C30%2C2s28%2C12.561%2C28%2C28S45.439%2C58%2C30%2C58z%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E')
+}
+.md-try-it-out {
+  border-radius:.1rem;
+  color:var(--md-default-fg-color--lightest);
+  cursor:pointer;
+  height:1.5em;
+  outline-color:var(--md-accent-fg-color);
+  outline-offset:.1rem;
+  position:absolute;
+  right:2.5em;
+  top:.5em;
+  transition:color .25s;
+  width:1.5em;
+  z-index:1
+}
+@media print {
+  .md-try-it-out {
+    display:none
+  }
+}
+.md-try-it-out:not(.focus-visible) {
+  -webkit-tap-highlight-color:transparent;
+  outline:none
+}
+:hover>.md-try-it-out {
+  color:var(--md-default-fg-color--light)
+}
+.md-try-it-out:focus,
+.md-try-it-out:hover {
+  color:var(--md-accent-fg-color)
+}
+.md-try-it-out:after {
+  background-color:currentcolor;
+  content:"";
+  display:block;
+  height:1.125em;
+  margin:0 auto;
+  -webkit-mask-image:var(--md-try-it-out-icon);
+  mask-image:var(--md-try-it-out-icon);
+  -webkit-mask-position:center;
+  mask-position:center;
+  -webkit-mask-repeat:no-repeat;
+  mask-repeat:no-repeat;
+  -webkit-mask-size:contain;
+  mask-size:contain;
+  width:1.125em
+}
