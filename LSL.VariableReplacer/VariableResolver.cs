@@ -4,7 +4,7 @@ internal class VariableResolver(VariableReplacerConfiguration config, VariablePa
 {
     public string Resolve(string variableName)
     {
-        return config.Variables.TryGetValue(variableName, out var value) 
+        return config.VariableResolver(config.ReadOnlyVariables, variableName, out var value) 
             ? Transform(value) 
             : config.VariableNotFound(variableName);
 

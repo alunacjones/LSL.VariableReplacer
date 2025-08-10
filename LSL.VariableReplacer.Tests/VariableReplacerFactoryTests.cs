@@ -31,7 +31,7 @@ public class VariableReplacerFactoryTests
     }
 
     [Test]
-    public void VariableReplacerFactory_GivenABuildWithVariablesAndACustomerFormatter_ItShouldReplaceAnyVariables()
+    public void VariableReplacerFactory_GivenABuildWithVariablesAndACustomFormatter_ItShouldReplaceAnyVariables()
     {
         var sut = new VariableReplacerFactory()
             .Build(c => c.AddVariable("name", "Als").WithValueFormatter(o => $"!{o}!"));
@@ -42,7 +42,24 @@ public class VariableReplacerFactoryTests
     }
 
     [Test]
-    public void VariableReplacerFactory_GivenABuildWithVariablesAndACustomerTypeFormatter_ItShouldReplaceAnyVariables()
+    public void VariableReplacerFactory_GivenABuildWithVariablesAndACustomResolver_ItShouldReplaceAnyVariables()
+    {
+        var sut = new VariableReplacerFactory()
+            .Build(c => c.AddVariable("Prefix_name", "Als")
+                .WithVariableResolver(
+                    (IReadOnlyDictionary<string, object> dictionary,                    
+                    string variableName,
+                    out object result) => dictionary.TryGetValue($"Prefix_{variableName}", out result)
+                )
+            );
+
+        sut.ReplaceVariables("Hello $(name)")
+            .Should()
+            .Be("Hello Als");
+    }    
+
+    [Test]
+    public void VariableReplacerFactory_GivenABuildWithVariablesAndACustomTypeFormatter_ItShouldReplaceAnyVariables()
     {
         var now = new DateTime(2010, 1, 1);
         var sut = new VariableReplacerFactory()
