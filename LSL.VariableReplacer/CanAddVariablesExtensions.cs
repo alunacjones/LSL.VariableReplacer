@@ -1,7 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace LSL.VariableReplacer;
 
@@ -102,11 +102,36 @@ public static class CanAddVariablesExtensions
                         return agg;
                     }
 
+                    var propertyValue = property.GetValue(value);
+
+                    if (propertyValue is null) return agg;
+                    
+                    if (propertyValue is IEnumerable enumerable)
+                    {
+                        var index = 0;
+                        foreach (var item in enumerable)
+                        {
+                            var itemType = item.GetType();
+                            if (configuration.PrimitiveTypeChecker(itemType))
+                            {
+                                source.AddVariable($"{configuration.Prefix}{MakePath($".{index}")}", item);
+                            }
+                            else
+                            {
+                                AddProperties(item, MakePath($".{index}"));
+                            }
+                            index++;
+                        }
+
+                        return agg;
+                    }
+
                     AddProperties(property.GetValue(value), MakePath());
+
                     return agg;
 
-                    string MakePath() =>
-                        path.Length == 0 ? $"{property.Name}" : $"{path}{configuration.PropertyPathSeparator}{property.Name}";
+                    string MakePath(string suffix = null) =>
+                        path.Length == 0 ? $"{property.Name}{suffix}" : $"{path}{configuration.PropertyPathSeparator}{property.Name}";
 
                     bool IncludeProperty() =>
                         configuration.PropertyFilter == null || configuration.PropertyFilter(new PropertyFilterContext(property, path));

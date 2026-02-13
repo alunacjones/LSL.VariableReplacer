@@ -604,4 +604,45 @@ internal class NotVeryUsefulTransformer : ITransformer
         // Return the variable-replaced result
         return result.ToString();
     }
+
+    [Test]
+    public void VariableReplacerFactory_GivenABuildWithVariablesFromAnObject2_ItShouldReplaceAnyVariables()
+    {
+        var instance = new GroupAndName("my group", "my name") { StringArray = ["blah"] };
+        var sut = new VariableReplacerFactory()
+            .Build(c => c.AddVariablesFromObject(instance));
+
+        var version = Environment.Version;
+        sut.Variables.Should().BeEquivalentTo(new Dictionary<string, object>
+        {
+            ["Group"] = "my group",
+            ["Name"] = "my name",
+            ["FullName"] = "my group:my name",
+            ["StringArray.0"] = "blah",
+            ["ListOfItems.0.Name"] = "a-name",
+        });
+
+        sut.ReplaceVariables("Hello $(Name). $(ListOfItems.0.Name), $(FullName)")
+            .Should()
+            .Be("Hello my name. a-name, my group:my name");
+    }
+
+}
+
+public class GroupAndName(string group, string name) : BaseClass
+{
+    public string Group { get; set; } = group;
+    public string Name { get; set; } = name;
+    public string FullName => $"{Group}:{Name}";
+}
+
+public class BaseClass
+{
+    public string[] StringArray { get; set; } = default!;
+    public List<ListItem> ListOfItems { get; set; } = [new("a-name")];
+}
+
+public class ListItem(string name)
+{
+    public string Name { get; set; } = name;
 }
