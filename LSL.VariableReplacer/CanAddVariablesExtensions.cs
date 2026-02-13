@@ -96,45 +96,51 @@ public static class CanAddVariablesExtensions
                 .GetProperties()
                 .Aggregate(source, (agg, property) =>
                 {
-                    if (configuration.PrimitiveTypeChecker(property.PropertyType))
-                    {
-                        if (IncludeProperty()) source.AddVariable($"{configuration.Prefix}{MakePath()}", property.GetValue(value));
-                        return agg;
-                    }
+                    if (IncludeProperty() is false) return agg;
 
                     var propertyValue = property.GetValue(value);
-
-                    if (propertyValue is null) return agg;
                     
-                    if (propertyValue is IEnumerable enumerable)
+                    if (propertyValue is IEnumerable enumerable && configuration.EnumerableTypeChecker(property.PropertyType))
                     {
-                        var index = 0;
-                        foreach (var item in enumerable)
-                        {
-                            var itemType = item.GetType();
-                            if (configuration.PrimitiveTypeChecker(itemType))
-                            {
-                                source.AddVariable($"{configuration.Prefix}{MakePath($".{index}")}", item);
-                            }
-                            else
-                            {
-                                AddProperties(item, MakePath($".{index}"));
-                            }
-                            index++;
-                        }
-
+                        IterateEnumerable(enumerable);
                         return agg;
                     }
 
-                    AddProperties(property.GetValue(value), MakePath());
+                    AddVariable(propertyValue, property.PropertyType);
 
                     return agg;
 
                     string MakePath(string suffix = null) =>
                         path.Length == 0 ? $"{property.Name}{suffix}" : $"{path}{configuration.PropertyPathSeparator}{property.Name}";
 
+                    void AddVariable(object value, Type valueType, string pathSuffix = null)
+                    {
+                        var path = $"{configuration.Prefix}{MakePath()}{pathSuffix}";
+
+                        if (configuration.PrimitiveTypeChecker(valueType) || value is null)
+                        {
+                            source.AddVariable(path, value);
+                            return;
+                        }
+
+                        AddProperties(value, MakePath(pathSuffix));
+                    }
+
+                    void IterateEnumerable(IEnumerable enumerable)
+                    {
+                        var index = 0;
+                        foreach (var item in enumerable)
+                        {
+                            var itemType = item.GetType();
+                            var suffix = $"{configuration.ArrayIndexDelimiters[0]}{index}{configuration.ArrayIndexDelimiters[1]}";
+                            var path = MakePath($"{configuration.ArrayIndexDelimiters[0]}{index}{configuration.ArrayIndexDelimiters[1]}");
+                            AddVariable(item, itemType, suffix);
+
+                            index++;
+                        }
+                    }
                     bool IncludeProperty() =>
-                        configuration.PropertyFilter == null || configuration.PropertyFilter(new PropertyFilterContext(property, path));
+                       configuration.PropertyFilter == null || configuration.PropertyFilter(new PropertyFilterContext(property, path));
                 });
     }
 }

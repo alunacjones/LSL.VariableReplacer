@@ -114,6 +114,8 @@ public class VariableReplacerFactoryTests
                 .WithPropertyPathSeparator("_")
                 .WithPropertyFilter(p => p.Property.Name != string.Empty && p.ParentPath != "never")
                 .WithPrimitiveTypeChecker(t => t.IsPrimitive || t == typeof(string))
+                .WithArrayIndexDelimiters(".", string.Empty)
+                .WithEnumerableChecker(t => t != typeof(string))
             ));
 
         sut.Variables.Should().BeEquivalentTo(new Dictionary<string, object>
